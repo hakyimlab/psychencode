@@ -8,16 +8,32 @@ editor_options:
 ---
 
 # Introduction
-Gandal et al analyzed autism spectrum disorder, schizophrenia, and bipolar disorder across multiple levels of transcriptomic organization—gene expression, local splicing, transcript isoform expression, and coexpression networks for both protein-coding and noncoding genes to produce a quantitative, genome-wide resource. More info on the study: https://science.sciencemag.org/content/362/6420/eaat8127
+Gandal et al analyzed autism spectrum disorder, schizophrenia, and bipolar disorder across multiple levels of transcriptomic organization—gene expression, local splicing, transcript isoform expression, and coexpression networks for both protein-coding and noncoding genes to produce a quantitative, genome-wide resource. 
+They performed TWAS based on postmortem frontal and temporal cerebral cortex samples from 1695 adults. RNA-sequencing reads were aligned to the GRCh37.p13 (hg19) reference genome. We generated a model using elastic-net weights released by Gandal et al. LD was calculated using 1000 Genomes European reference panel.
+More info on the study: https://science.sciencemag.org/content/362/6420/eaat8127.
 The TWAS is available at http://resource.psychencode.org
 
-Gandal et al performed TWAS based on postmortem frontal and temporal cerebral cortex samples from 1695 adults. RNA-sequencing reads were aligned to the GRCh37.p13 (hg19) reference genome. We generated a model using elastic-net weights released by Gandal et al. LD was calculated using 1000 Genomes European reference panel.
+# Definitions
+Define variables in the terminal:
+```{bash, eval=FALSE}
+export PRE="/Users/sabrinami/Github/psychencode"
+export CODE=$PRE/code
+export DATA=$PRE/data
+export OUTPUT=$PRE/output
+```
+Now in R:
+```{r, eval=FALSE}
+PRE="/Users/sabrinami/Github/psychencode"
+DATA=glue::glue("{PRE}/data")
+OUTPUT=glue::glue("{PRE}/output")
+```
 
 # Download Data
 TWAS data can be downloaded at http://resource.psychencode.org
-Or download from *terminal* by running
+Or download from terminal by running
 
 ```{bash, eval=FALSE}
+cd $DATA
 wget "http://resource.psychencode.org/Datasets/Derived/PEC_TWAS_weights.tar.gz"
 ```
 And unzip
@@ -33,7 +49,7 @@ In the wgt.matrix table, the rownames are the snp ids, and the columns are the w
 In R, set the directory to PEC_TWAS_weights, then load the file:
 
 ```{r, eval=FALSE}
-setwd("~/Desktop/PEC_TWAS_weights")
+setwd("/Users/sabrinami/Github/psychencode/data/PEC_TWAS_weights")
 load("ENSG00000000457.wgt.RDat")
 ```
 Now, the snps, wgt.matrix, and cv.performance are defined as variables.
@@ -72,9 +88,10 @@ files <- list.files(pattern = "\\.RDat")
 ```
 The goal is to write tab delimited file with gene, chr, pos, ref, eff, and enet data for all genes in directory. Convert the first file in the vector to dataframe, then write it to a text file. And repeat for the remaining files, then append to the same text file.
 ```{r, eval=FALSE}
-write.table(make_df(files[1]), "pre_weights.txt", sep = "\t", quote = FALSE, row.names = FALSE)
+pre_weights = glue::glue("{OUTPUT}/pre_weights.txt")
+write.table(make_df(files[1]), pre_weights, sep = "\t", quote = FALSE, row.names = FALSE)
 for(i in 2:length(files)) {
-  write.table(make_df(files[i]), "pre_weights.txt", append = TRUE, sep = "\t", quote = FALSE, col.names = FALSE, row.names = FALSE)
+  write.table(make_df(files[i]), pre_weights, append = TRUE, sep = "\t", quote = FALSE, col.names = FALSE, row.names = FALSE)
 }
 ```
 
@@ -85,19 +102,22 @@ The lookup table, dbSNP150_list.txt, contains chromosome, position, ref, alt, rs
 The output, weights_out.txt, will have gene, chr, pos, ref, eff, and rsid as new_id.
 In the terminal, run:
 ```{bash, eval=FALSE}
-python3 annotate_snp_by_position.py \
---input psychencode.txt.gz --chr_col 2 --pos_col 3 \
---lookup_table dbSNP150_list.txt.gz --lookup_chr_col 1 --lookup_start_col 2 --lookup_end_col 2 --lookup_newid_col 5 --if_input_has_header 1 \
---out_txtgz weights_out.txt.gz
+python3 $CODE/annotate_snp_by_position.py \
+--input $OUTPUT/pre_weights.txt --chr_col 2 --pos_col 3 \
+--lookup_table $DATA/dbSNP150_list.txt.gz --lookup_chr_col 1 --lookup_start_col 2 --lookup_end_col 2 --lookup_newid_col 5 --if_input_has_header 1 \
+--out_txtgz $OUTPUT/weights_out.txt.gz
 ```
-
+This will take several hours. Unzip weights_out.txt before reading into R.
+```{bash, eval=FALSE}
+gunzip $OUTPUT/weights_out.txt.gz
+```
 # Add varIDs
 
 Read weights_out.txt in R, and define varID from chromosome, position, reference and effect alleles. (The RNA-seq was in hg19, so varID is defined in b37)
 
 ```{r, eval=FALSE}
 weights <- fread("weights_out.txt")
-weights$varID <- paste(weights$chromosome, weights$position, weights$ref_allele, weights$eff_allele, "b37", sep = "_")
+weights$varID <- paste("chr", weights$chromosome, weights$position, weights$ref_allele, weights$eff_allele, "b37", sep = "_")
 weights <- weights %>% select(gene, rsid, varID, ref_allele, alt_allele, enet) %>% rename(weight = enet, rsid = new_id)
 ```
 
@@ -117,7 +137,8 @@ extra <- extra[c(1, 3, 2, 4, 5, 6)]
 # Write to SQLite Database
 Create database connection, and write the weights and extra tables to database.
 ```{r, eval=FALSE}
-conn <- dbConnect(RSQLite::SQLite(), "psychencode.db")
+model_db = glue::glue("{OUTPUT}/psychencode.db")
+conn <- dbConnect(RSQLite::SQLite(), model_db)
 dbWriteTable(conn, "weights", weights)
 dbWriteTable(conn, "extra", extra)
 ```
