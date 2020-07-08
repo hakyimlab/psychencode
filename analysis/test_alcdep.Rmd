@@ -1,0 +1,240 @@
+---
+title: "test"
+author: "sabrina-mi"
+date: "2020-07-01"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+# Download Data
+I used a GWAS of alcohol dependence to test S-PrediXcan on the psychencode model against PredictDB models trained using GTEx v7 data, subsampled to use European samples. The GWAS was performed on unrelated genotyped individuals of European ancestry, with 8,485 cases and 20,272 controls. More info on the study: https://www.biorxiv.org/content/early/2018/03/10/257311. Download the GWAS: https://www.med.unc.edu/pgc/download-results/, filter by Alcohol, the Alcohol Dependence. The GTEx models can be downloaded on predictdb.org or with `wget "https://zenodo.org/record/3572799/files/GTEx-V7_HapMap-2017-11-29.tar.gz"`
+
+# Definitions
+```{bash, eval=FALSE}
+conda activate imlabtools
+METAXCAN=/Users/sabrinami/Github/MetaXcan/software
+MODEL=/Users/sabrinami/Github/psychencode/models
+RESULTS=/Users/sabrinami/Github/psychencode/output/test_results
+DATA=/Users/sabrinami/Desktop/psychencode_test_data
+```
+
+
+# MetaXcan
+
+## Run Predict
+
+```{bash, eval=FALSE}
+printf "Predict expression with Psychencode model\n\n"
+python3 $METAXCAN/Predict.py \
+--model_db_path $MODEL/psychencode_model/psychencode.db \
+--vcf_genotypes $DATA/1000G_hg37/ALL.chr1.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz \
+--vcf_mode genotyped \
+--prediction_output $RESULTS/predixcan/psychencode__predict.txt \
+--prediction_summary_output $RESULTS/predixcan/psychencode__summary.txt \
+--verbosity 9 \
+--throw
+```
+
+```{bash, eval=FALSE}
+printf "Predict expression with Brain Cortex model\n\n"
+python3 $METAXCAN/Predict.py \
+--model_db_path $MODEL/GTEx-V7-en/gtex_v7_Brain_Cortex_imputed_europeans_tw_0.5_signif.db \
+--vcf_genotypes $DATA/1000G_hg37/ALL.chr1.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz \
+--vcf_mode genotyped \
+--prediction_output $RESULTS/predixcan/Brain_Cortex__predict.txt \
+--prediction_summary_output $RESULTS/predixcan/Brain_Cortex__summary.txt \
+--verbosity 9 \
+--throw
+```
+
+```{bash, eval=FALSE}
+printf "Predict expression with Whole Blood model\n\n"
+python3 $METAXCAN/Predict.py \
+--model_db_path $MODEL/GTEx-V7-en/gtex_v7_Whole_Blood_imputed_europeans_tw_0.5_signif.db \
+--vcf_genotypes $DATA/1000G_hg37/ALL.chr1.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz \
+--vcf_mode genotyped \
+--prediction_output $RESULTS/predixcan/Whole_Blood__predict.txt \
+--prediction_summary_output $RESULTS/predixcan/Whole_Blood__summary.txt \
+--verbosity 9 \
+--throw
+```
+## Run S-PrediXcan
+Run S-PrediXcan on alcohol dependence GWAS with psychencode model, then repeat with GTEx-V7-en Brain Cortex and Whole Blood models.
+```{bash, eval=FALSE}
+python3 $METAXCAN/SPrediXcan.py --gwas_file $DATA/pgc_alcdep.aug2018_release/pgc_alcdep.eur_unrel_genotyped.aug2018_release.txt.gz \
+--model_db_path $MODEL/psychencode_model/psychencode.db \
+--covariance $MODEL/psychencode_model/psychencode.txt.gz \
+--output_file $RESULTS/spredixcan/eqtl/pgc_alcdep/pgc_alcdep.eur_psychencode.csv \
+--or_column OR \
+--pvalue_column P \
+--snp_column SNP \
+--non_effect_allele_column A2 \
+--effect_allele_column A1 \
+--separator " "
+```
+
+```{bash, eval=FALSE}
+printf "GTEx Brain Cortex model\n\n"
+python3 $METAXCAN/SPrediXcan.py --gwas_file $DATA/pgc_alcdep.aug2018_release/pgc_alcdep.eur_unrel_genotyped.aug2018_release.txt.gz \
+--model_db_path $MODEL/GTEx-V7-en/gtex_v7_Brain_Cortex_imputed_europeans_tw_0.5_signif.db \
+--covariance $MODEL/GTEx-V7-en/gtex_v7_Brain_Cortex_imputed_eur_covariances.txt.gz \
+--output_file $RESULTS/spredixcan/eqtl/pgc_alcdep/pgc_alcdep.eur_Brain_Cortex.csv \
+--or_column OR \
+--pvalue_column P \
+--snp_column SNP \
+--non_effect_allele_column A2 \
+--effect_allele_column A1 \
+--separator " "
+
+```
+
+```{bash, eval=FALSE}
+printf "GTEx Whole Blood model\n\n"
+python3 $METAXCAN/SPrediXcan.py --gwas_file $DATA/pgc_alcdep.aug2018_release/pgc_alcdep.eur_unrel_genotyped.aug2018_release.txt.gz \
+--model_db_path $MODEL/GTEx-V7-en/gtex_v7_Whole_Blood_imputed_europeans_tw_0.5_signif.db \
+--covariance $MODEL/GTEx-V7-en/gtex_v7_Whole_Blood_imputed_eur_covariances.txt.gz \
+--output_file $RESULTS/spredixcan/eqtl/pgc_alcdep/pgc_alcdep.eur_Whole_Blood.csv \
+--or_column OR \
+--pvalue_column P \
+--snp_column SNP \
+--non_effect_allele_column A2 \
+--effect_allele_column A1 \
+--separator " "
+```
+
+# Compare Results
+## Definitions
+```{r}
+PRE="/Users/sabrinami/Github/psychencode"
+DATA="/Users/sabrinami/Desktop/psychencode_test_data"
+RESULTS=glue::glue("{PRE}/output/test_results")
+CODE=glue::glue("{PRE}/code")
+source(glue::glue("{CODE}/load_data_functions.R"))
+source(glue::glue("{CODE}/plotting_utils_functions.R"))
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(qqman))
+
+gencode_df = load_gencode_df()
+```
+
+## Prediction Performance
+Load prediction outputs into R.
+```{r}
+prediction_fp_Whole_Blood = glue::glue("{RESULTS}/predixcan/Whole_Blood__predict.txt")
+
+
+## Read the Predict.py output into a dataframe. This function reorganizes the data and adds gene names.
+predicted_expression_Whole_Blood = load_predicted_expression(prediction_fp_Whole_Blood, gencode_df)
+
+head(predicted_expression_Whole_Blood)
+
+## read summary of prediction, number of SNPs per gene, cross validated prediction performance
+prediction_summary_Whole_Blood = load_prediction_summary(glue::glue("{RESULTS}/predixcan/Whole_Blood__summary.txt"), gencode_df)
+## number of genes with a prediction model
+dim(prediction_summary_Whole_Blood)
+head(prediction_summary_Whole_Blood)
+```
+
+```{r}
+prediction_fp_psychencode = glue::glue("{RESULTS}/predixcan/psychencode__predict.txt")
+predicted_expression_psychencode = load_predicted_expression(prediction_fp_psychencode, gencode_df)
+
+head(predicted_expression_psychencode)
+
+prediction_summary_psychencode = load_prediction_summary(glue::glue("{RESULTS}/predixcan/psychencode__summary.txt"), gencode_df)
+dim(prediction_summary_psychencode)
+head(prediction_summary_psychencode)
+```
+
+```{r}
+prediction_fp_Brain_Cortex = glue::glue("{RESULTS}/predixcan/Brain_Cortex__predict.txt")
+
+predicted_expression_Brain_Cortex = load_predicted_expression(prediction_fp_Brain_Cortex, gencode_df)
+
+head(predicted_expression_Brain_Cortex)
+
+prediction_summary_Brain_Cortex = load_prediction_summary(glue::glue("{RESULTS}/predixcan/Brain_Cortex__summary.txt"), gencode_df)
+dim(prediction_summary_Brain_Cortex)
+head(prediction_summary_Brain_Cortex)
+```
+Load observed expression.
+```{r}
+observed_expression = read.csv(glue::glue("{DATA}/GEUVADIS.observed_df.csv"))
+```
+Merge predicted expression with observed expression, and calculate correlation between predicted and observed expression for each model.
+```{r}
+merged_Whole_Blood = merge(predicted_expression_Whole_Blood, observed_expression, by = c("gene_id", "IID"))
+# calculate correlation between predicted and observed expression for each gene
+correlation_Whole_Blood = merged_Whole_Blood %>% group_by(gene_id) %>% summarise(corr = cor(predicted_expression, observed_expression, method = "spearman"))
+summary(correlation_Whole_Blood)
+```
+
+```{r}
+merged_psychencode = merge(predicted_expression_psychencode, observed_expression, by = c("gene_id", "IID"))
+# calculate correlation between predicted and observed expression for each gene
+correlation_psychencode = merged_psychencode %>% group_by(gene_id) %>% summarise(corr = cor(predicted_expression, observed_expression, method = "spearman"))
+summary(correlation_psychencode)
+```
+
+```{r}
+merged_Brain_Cortex = merge(predicted_expression_Brain_Cortex, observed_expression, by = c("gene_id", "IID"))
+# calculate correlation between predicted and observed expression for each gene
+correlation_Brain_Cortex = merged_Brain_Cortex %>% group_by(gene_id) %>% summarise(corr = cor(predicted_expression, observed_expression, method = "spearman"))
+summary(correlation_Brain_Cortex)
+```
+
+## S-PrediXcan Results
+Load S-PrediXcan association output into R, and check for significant genes.
+```{r}
+spredixcan_association_psychencode = load_spredixcan_association(glue::glue("{RESULTS}/spredixcan/eqtl/pgc_alcdep/pgc_alcdep.eur_psychencode.csv"), gencode_df)
+dim(spredixcan_association_psychencode)
+spredixcan_association_psychencode %>% filter(pvalue < 0.05/nrow(spredixcan_association_psychencode))
+```
+
+```{r}
+spredixcan_association_Brain_Cortex = load_spredixcan_association(glue::glue("{RESULTS}/spredixcan/eqtl/pgc_alcdep/pgc_alcdep.eur_Brain_Cortex.csv"), gencode_df)
+dim(spredixcan_association_Brain_Cortex)
+spredixcan_association_Brain_Cortex %>% filter(pvalue < 0.05/nrow(spredixcan_association_Brain_Cortex))
+spredixcan_association_Brain_Cortex %>% arrange(pvalue) %>% select(gene, pvalue) %>% head
+```
+
+```{r}
+spredixcan_association_Whole_Blood = load_spredixcan_association(glue::glue("{RESULTS}/spredixcan/eqtl/pgc_alcdep/pgc_alcdep.eur_Whole_Blood.csv"), gencode_df)
+dim(spredixcan_association_Whole_Blood)
+spredixcan_association_Whole_Blood %>% filter(pvalue < 0.05/nrow(spredixcan_association_Whole_Blood))
+spredixcan_association_Whole_Blood %>% arrange(pvalue) %>% select(gene, pvalue) %>% head
+```
+
+# Plot S-PrediXcan Association
+Manhattan plot and qq plot for alcohol dependence GWAS. There's only one or two significant peaks.
+```{r, eval=FALSE}
+alcdep_GWAS = read.table(glue::glue("{DATA}/pgc_alcdep.aug2018_release/pgc_alcdep.eur_unrel_genotyped.aug2018_release.txt.gz"), header=TRUE, sep=" ")
+manhattan(alcdep_GWAS, chr="CHR", bp="BP", snp="SNP", p="P" )
+gg_qqplot(alcdep_GWAS$P)
+```
+
+Plot p-values of association output.
+```{r}
+spredixcan_association_Brain_Cortex %>% arrange(pvalue) %>% ggplot(aes(pvalue)) + geom_histogram(bins=20)
+
+gg_qqplot(spredixcan_association_Brain_Cortex$pvalue)
+```
+
+```{r}
+spredixcan_association_psychencode %>% arrange(pvalue) %>% ggplot(aes(pvalue)) + geom_histogram(bins=20)
+
+gg_qqplot(spredixcan_association_psychencode$pvalue)
+```
+
+```{r}
+Brain_Cortex_psychencode_association = inner_join(spredixcan_association_Brain_Cortex, spredixcan_association_psychencode, by=c("gene"))
+dim(Brain_Cortex_psychencode_association)
+Brain_Cortex_psychencode_association %>% ggplot(aes(zscore.x, zscore.y)) + geom_point()
+```
+
+```{r}
+spredixcan_association_Whole_Blood %>% arrange(pvalue) %>% ggplot(aes(pvalue)) + geom_histogram(bins=20)
+
+gg_qqplot(spredixcan_association_Whole_Blood$pvalue)
+```

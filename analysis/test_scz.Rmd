@@ -1,0 +1,61 @@
+---
+title: "test_scz"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Definitions
+```{bash definitions}
+conda activate imlabtools
+METAXCAN=/Users/sabrinami/Github/MetaXcan/software
+MODEL=/Users/sabrinami/Github/psychencode/models
+RESULTS=/Users/sabrinami/Github/psychencode/output/test_results
+DATA=/Users/sabrinami/Desktop/psychencode_test_data
+```
+
+## Download Data and Reformat
+More info on the study: https://www.nature.com/articles/s41588-018-0059-2#MOESM4
+More info on the GWAS results: https://walters.psycm.cf.ac.uk
+
+```{bash}
+cd $DATA
+wget "https://walters.psycm.cf.ac.uk/clozuk_pgc2.meta.sumstats.txt.gz" --no-check-certificate
+gunzip clozuk_pgc2.meta.sumstats.txt.gz
+awk -F'\t' 'BEGIN { OFS = "\t" } ; {$10="chr"$3"_"$4"_"toupper($6)"_"toupper($5)"_b37"; print $10,$3,$4,toupper($5),toupper($6),$7,$8,$9}' clozuk_pgc2.meta.sumstats.txt > clozuk_pgc2.meta.sumstats.out.txt
+
+```
+
+## Run S-PrediXcan
+Run S-PrediXcan on SCZ GWAS with psychencode model, and repeat for GTEx Brain Cortex and Whole Blood models.
+```{bash}
+python3 $METAXCAN/SPrediXcan.py --gwas_file $DATA/clozuk_pgc2.meta.sumstats.out.txt \
+--model_db_path $MODEL/psychencode_model/psychencode.db \
+--covariance $MODEL/psychencode_model/psychencode.txt.gz \
+--keep_non_rsid --additional_output --model_db_snp_key varID \
+--or_column OR \
+--se_column SE \
+--pvalue_column P \
+--snp_column chrCHR_BP_A2_A1_b37 \
+--non_effect_allele_column A2 \
+--effect_allele_column A1 \
+--throw \
+--output_file $RESULTS/spredixcan/eqtl/clozuk_pgc2/clozuk_pgc2_psychencode.csv
+```
+
+```{bash}
+python3 $METAXCAN/SPrediXcan.py --gwas_file $DATA/clozuk_pgc2.meta.sumstats.out.txt \
+--model_db_path $MODEL/GTEx-V7-en/gtex_v7_Brain_Cortex_imputed_europeans_tw_0.5_signif.db \
+--covariance $MODEL/GTEx-V7-en/gtex_v7_Brain_Cortex_imputed_eur_covariances.txt.gz \
+--keep_non_rsid --model_db_snp_key varID \
+--or_column OR \
+--se_column SE \
+--pvalue_column P \
+--snp_column chrCHR_BP_A2_A1_b37 \
+--non_effect_allele_column A2 \
+--effect_allele_column A1 \
+--separator $'\t' \
+--throw \
+--output_file $RESULTS/spredixcan/eqtl/clozuk_pgc2/clozuk_pgc2_Brain_Cortex.csv
+```
