@@ -6,7 +6,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-## Definitions
+# Definitions
 ```{bash definitions}
 conda activate imlabtools
 METAXCAN=/Users/sabrinami/Github/MetaXcan/software
@@ -15,7 +15,7 @@ RESULTS=/Users/sabrinami/Github/psychencode/output/test_results
 DATA=/Users/sabrinami/Desktop/psychencode_test_data
 ```
 
-## Download Data and Reformat
+# Download Data and Reformat
 More info on the study: https://www.nature.com/articles/s41588-018-0059-2#MOESM4
 More info on the GWAS results: https://walters.psycm.cf.ac.uk
 
@@ -27,21 +27,74 @@ awk -F'\t' 'BEGIN { OFS = "\t" } ; {$10="chr"$3"_"$4"_"toupper($6)"_"toupper($5)
 
 ```
 
-## Run S-PrediXcan
+# Plot GWAS
+## Load Libraries
+```{r libraries}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(qqman))
+suppressPackageStartupMessages(library(data.table))
+suppressPackageStartupMessages(library(RSQLite))
+```
+## Definitions
+```{r definitions}
+PRE="/Users/sabrinami/Github/psychencode"
+DATA="/Users/sabrinami/Desktop/psychencode_test_data"
+RESULTS=glue::glue("{PRE}/output/test_results")
+CODE=glue::glue("{PRE}/code")
+source(glue::glue("{CODE}/load_data_functions.R"))
+source(glue::glue("{CODE}/plotting_utils_functions.R"))
+```
+
+## Load GWAS and Plot Data
+```{r plot_gwas}
+scz_GWAS = fread(glue::glue("{DATA}/clozuk_pgc2.meta.sumstats.txt"), header=TRUE, sep="\t")
+manhattan(scz_GWAS, chr="CHR", bp="BP", snp="SNP", p="P" )
+gg_qqplot(scz_GWAS$P)
+```
+
+```{r debugging}
+scz_GWAS_mod <- scz_GWAS %>% mutate(A1=toupper(A1), A2=toupper(A2), varID = paste(paste("chr", CHR, sep=""), BP, A2, A1, "b37", sep="_"), varID_v7 = paste(CHR, BP, A2, A1, "b37", sep="_"))
+conn <- dbConnect(RSQLite::SQLite(), model_db)
+model_snps <- dbGetQuery(conn, 'SELECT * FROM weights')
+dbDisconnect(conn)
+shared_snps <- inner_join(model_snps, scz_GWAS_mod, by=c("varID"))
+scz_GWAS_model_snps <- shared_snps %>% select(varID, CHR, BP, A1, A2, OR, SE, P)
+write.table(scz_GWAS_model_snps, glue::glue("{DATA}/clozuk_pgc2.meta.sumstats.mod.txt"), quote=FALSE, row.names=FALSE)
+write.table(scz_GWAS_mod, glue::glue("{DATA}/clozuk_pgc2.meta.sumstats.out.txt"), quote=FALSE, row.names=FALSE)
+```
+
+# Run S-PrediXcan
 Run S-PrediXcan on SCZ GWAS with psychencode model, and repeat for GTEx Brain Cortex and Whole Blood models.
+```{bash spredixcan_psychencode}
+python3 $METAXCAN/SPrediXcan.py --gwas_file $DATA/clozuk_pgc2.meta.sumstats.out.txt \
+--model_db_path $MODEL/psychencode_model/psychencode.db \
+--covariance $MODEL/psychencode_model/psychencode.txt.gz \
+--keep_non_rsid --model_db_snp_key varID \
+--or_column OR \
+--pvalue_column P \
+--snp_column varID \
+--non_effect_allele_column A2 \
+--effect_allele_column A1 \
+--throw \
+--verbosity 1 \
+--overwrite \
+--output_file $RESULTS/spredixcan/eqtl/clozuk_pgc2/clozuk_pgc2_psychencode.csv > $RESULTS/spredixcan/eqtl/clozuk_pgc2/clozuk_psychencode_output.txt 2>&1
+```
+
 ```{bash}
 python3 $METAXCAN/SPrediXcan.py --gwas_file $DATA/clozuk_pgc2.meta.sumstats.out.txt \
 --model_db_path $MODEL/psychencode_model/psychencode.db \
 --covariance $MODEL/psychencode_model/psychencode.txt.gz \
---keep_non_rsid --additional_output --model_db_snp_key varID \
+--keep_non_rsid --model_db_snp_key varID \
 --or_column OR \
---se_column SE \
 --pvalue_column P \
---snp_column chrCHR_BP_A2_A1_b37 \
+--snp_column varID \
 --non_effect_allele_column A2 \
 --effect_allele_column A1 \
+--verbosity 1 \
 --throw \
---output_file $RESULTS/spredixcan/eqtl/clozuk_pgc2/clozuk_pgc2_psychencode.csv
+--overwrite \
+--output_file $RESULTS/spredixcan/eqtl/clozuk_pgc2/clozuk_pgc2_psychencode.csv > $RESULTS/spredixcan/eqtl/clozuk_pgc2/clozuk_psychencode_output.txt 2>&1
 ```
 
 ```{bash}
@@ -50,12 +103,42 @@ python3 $METAXCAN/SPrediXcan.py --gwas_file $DATA/clozuk_pgc2.meta.sumstats.out.
 --covariance $MODEL/GTEx-V7-en/gtex_v7_Brain_Cortex_imputed_eur_covariances.txt.gz \
 --keep_non_rsid --model_db_snp_key varID \
 --or_column OR \
---se_column SE \
 --pvalue_column P \
---snp_column chrCHR_BP_A2_A1_b37 \
+--snp_column varID_v7 \
 --non_effect_allele_column A2 \
 --effect_allele_column A1 \
---separator $'\t' \
+--verbosity 1 \
 --throw \
---output_file $RESULTS/spredixcan/eqtl/clozuk_pgc2/clozuk_pgc2_Brain_Cortex.csv
+--overwrite \
+--output_file $RESULTS/spredixcan/eqtl/clozuk_pgc2/clozuk_pgc2_Brain_Cortex.csv > $RESULTS/spredixcan/eqtl/clozuk_pgc2/clozuk_Brain_Cortex_output.txt 2>&1
 ```
+
+```{bash M03 clozuk}
+python3 $METAXCAN/M03_betas.py --gwas_file $DATA/clozuk_pgc2.meta.sumstats.out.txt \
+--model_db_path $MODEL/GTEx-V7-en/gtex_v7_Brain_Cortex_imputed_europeans_tw_0.5_signif.db \
+--model_db_snp_key varID \
+--or_column OR \
+--pvalue_column P \
+--snp_column varID_v7 \
+--non_effect_allele_column A2 \
+--effect_allele_column A1 \
+--keep_non_rsid \
+--verbosity 1 \
+--throw \
+--output $RESULTS/spredixcan/eqtl/clozuk_pgc2/clozuk_pgc2_Brain_Cortex_M03_betas.txt
+```
+
+```{bash M03 alcdep}
+python3 $METAXCAN/M03_betas.py --gwas_file $DATA/pgc_alcdep.aug2018_release/pgc_alcdep.eur_unrel_genotyped.aug2018_release.txt.gz \
+--model_db_path $MODEL/GTEx-V7-en/gtex_v7_Brain_Cortex_imputed_europeans_tw_0.5_signif.db \
+--or_column OR \
+--pvalue_column P \
+--snp_column SNP \
+--non_effect_allele_column A2 \
+--effect_allele_column A1 \
+--keep_non_rsid \
+--verbosity 1 \
+--throw \
+--output $RESULTS/spredixcan/eqtl/pgc_alcdep/pgc_alcdep.eur_Brain_Cortex_M03_betas.txt
+```
+

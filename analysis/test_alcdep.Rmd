@@ -79,13 +79,13 @@ printf "GTEx Brain Cortex model\n\n"
 python3 $METAXCAN/SPrediXcan.py --gwas_file $DATA/pgc_alcdep.aug2018_release/pgc_alcdep.eur_unrel_genotyped.aug2018_release.txt.gz \
 --model_db_path $MODEL/GTEx-V7-en/gtex_v7_Brain_Cortex_imputed_europeans_tw_0.5_signif.db \
 --covariance $MODEL/GTEx-V7-en/gtex_v7_Brain_Cortex_imputed_eur_covariances.txt.gz \
+--overwrite --throw --verbosity 1 \
 --output_file $RESULTS/spredixcan/eqtl/pgc_alcdep/pgc_alcdep.eur_Brain_Cortex.csv \
 --or_column OR \
 --pvalue_column P \
 --snp_column SNP \
 --non_effect_allele_column A2 \
---effect_allele_column A1 \
---separator " "
+--effect_allele_column A1 > alcdep_Brain_Cortex_output.txt 2>&1
 
 ```
 
@@ -208,7 +208,7 @@ spredixcan_association_Whole_Blood %>% arrange(pvalue) %>% select(gene, pvalue) 
 
 # Plot S-PrediXcan Association
 Manhattan plot and qq plot for alcohol dependence GWAS. There's only one or two significant peaks.
-```{r, eval=FALSE}
+```{r plot_gwas}
 alcdep_GWAS = read.table(glue::glue("{DATA}/pgc_alcdep.aug2018_release/pgc_alcdep.eur_unrel_genotyped.aug2018_release.txt.gz"), header=TRUE, sep=" ")
 manhattan(alcdep_GWAS, chr="CHR", bp="BP", snp="SNP", p="P" )
 gg_qqplot(alcdep_GWAS$P)
