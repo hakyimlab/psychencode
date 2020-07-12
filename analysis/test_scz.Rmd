@@ -1,12 +1,14 @@
 ---
-title: "test_scz"
-output: html_document
+title: "Testing Psychencode Model on Schizophrenia GWAS"
+author: "sabrina-mi"
+date: "2020-07-10"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 # Definitions
+
 ```{bash definitions}
 conda activate imlabtools
 METAXCAN=/Users/sabrinami/Github/MetaXcan/software
@@ -15,7 +17,28 @@ RESULTS=/Users/sabrinami/Github/psychencode/output/test_results
 DATA=/Users/sabrinami/Desktop/psychencode_test_data
 ```
 
-# Download Data and Reformat
+Similarly, in R, load the libraries, then set the same definitions
+```{r libraries}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(qqman))
+suppressPackageStartupMessages(library(data.table))
+suppressPackageStartupMessages(library(RSQLite))
+```
+
+
+```{r definitions}
+PRE="/Users/sabrinami/Github/psychencode"
+DATA="/Users/sabrinami/Desktop/psychencode_test_data"
+RESULTS=glue::glue("{PRE}/output/test_results")
+CODE=glue::glue("{PRE}/code")
+MODEL=glue::glue("{PRE}/models")
+source(glue::glue("{CODE}/load_data_functions.R"))
+source(glue::glue("{CODE}/plotting_utils_functions.R"))
+
+gencode_df = load_gencode_df()
+```
+
+# Download Data
 More info on the study: https://www.nature.com/articles/s41588-018-0059-2#MOESM4
 More info on the GWAS results: https://walters.psycm.cf.ac.uk
 
@@ -23,122 +46,166 @@ More info on the GWAS results: https://walters.psycm.cf.ac.uk
 cd $DATA
 wget "https://walters.psycm.cf.ac.uk/clozuk_pgc2.meta.sumstats.txt.gz" --no-check-certificate
 gunzip clozuk_pgc2.meta.sumstats.txt.gz
-awk -F'\t' 'BEGIN { OFS = "\t" } ; {$10="chr"$3"_"$4"_"toupper($6)"_"toupper($5)"_b37"; print $10,$3,$4,toupper($5),toupper($6),$7,$8,$9}' clozuk_pgc2.meta.sumstats.txt > clozuk_pgc2.meta.sumstats.out.txt
-
 ```
 
-# Plot GWAS
-## Load Libraries
-```{r libraries}
-suppressPackageStartupMessages(library(tidyverse))
-suppressPackageStartupMessages(library(qqman))
-suppressPackageStartupMessages(library(data.table))
-suppressPackageStartupMessages(library(RSQLite))
-```
-## Definitions
-```{r definitions}
-PRE="/Users/sabrinami/Github/psychencode"
-DATA="/Users/sabrinami/Desktop/psychencode_test_data"
-RESULTS=glue::glue("{PRE}/output/test_results")
-CODE=glue::glue("{PRE}/code")
-source(glue::glue("{CODE}/load_data_functions.R"))
-source(glue::glue("{CODE}/plotting_utils_functions.R"))
-```
+# Reformat GWAS
 
-## Load GWAS and Plot Data
+## Load GWAS and Plot
+First, we plot the GWAS.
 ```{r plot_gwas}
 scz_GWAS = fread(glue::glue("{DATA}/clozuk_pgc2.meta.sumstats.txt"), header=TRUE, sep="\t")
 manhattan(scz_GWAS, chr="CHR", bp="BP", snp="SNP", p="P" )
 gg_qqplot(scz_GWAS$P)
 ```
 
-```{r debugging}
+## Reformat GWAS
+
+Modify the SNPS column to match model format.
+```{r}
 scz_GWAS_mod <- scz_GWAS %>% mutate(A1=toupper(A1), A2=toupper(A2), varID = paste(paste("chr", CHR, sep=""), BP, A2, A1, "b37", sep="_"), varID_v7 = paste(CHR, BP, A2, A1, "b37", sep="_"))
-conn <- dbConnect(RSQLite::SQLite(), model_db)
-model_snps <- dbGetQuery(conn, 'SELECT * FROM weights')
-dbDisconnect(conn)
-shared_snps <- inner_join(model_snps, scz_GWAS_mod, by=c("varID"))
-scz_GWAS_model_snps <- shared_snps %>% select(varID, CHR, BP, A1, A2, OR, SE, P)
-write.table(scz_GWAS_model_snps, glue::glue("{DATA}/clozuk_pgc2.meta.sumstats.mod.txt"), quote=FALSE, row.names=FALSE)
 write.table(scz_GWAS_mod, glue::glue("{DATA}/clozuk_pgc2.meta.sumstats.out.txt"), quote=FALSE, row.names=FALSE)
+```
+
+## Reformat Model Covariance
+Load the model and covariance matrix
+```{r}
+psychencode_model = glue::glue("{MODEL}/psychencode_model/psychencode.db")
+psychencode_covariance = fread(glue::glue("{MODEL}/psychencode_model/psychencode.txt.gz"), header=TRUE, sep=" ")
+conn <- dbConnect(RSQLite::SQLite(), psychencode_model)
+snps <- dbGetQuery(conn, 'SELECT rsid, varID FROM weights')
+dbDisconnect(conn)
+```
+
+```{r}
+snps_mapping <- distinct(snps)
+psychencode_covariance_mod <- psychencode_covariance %>% left_join(snps_mapping, by=c("RSID1"="rsid")) %>% select(GENE, varID, RSID2, VALUE) %>% rename(RSID1 = varID)
+psychencode_covariance_mod <- psychencode_covariance_mod %>% left_join(snps_mapping, by=c("RSID2"="rsid")) %>% select(GENE, RSID1, varID, VALUE) %>% rename(RSID2 = varID)
+write.table(psychencode_covariance_mod, glue::glue("{MODEL}/psychencode_model/psychencode_varID.txt"), quote=FALSE, row.names=FALSE)
+```
+
+Repeat for the GTEx models. 
+```{r}
+Brain_Cortex_model = glue::glue("{MODEL}/GTEx-V7-en/gtex_v7_Brain_Cortex_imputed_europeans_tw_0.5_signif.db")
+Brain_Cortex_covariance = fread(glue::glue("{MODEL}/GTEx-V7-en/gtex_v7_Brain_Cortex_imputed_eur_covariances.txt.gz"), header=TRUE, sep=" ")
+conn <- dbConnect(RSQLite::SQLite(), Brain_Cortex_model)
+snps <- dbGetQuery(conn, 'SELECT rsid, varID FROM weights')
+dbDisconnect(conn)
+```
+
+```{r}
+snps_mapping <- distinct(snps)
+Brain_Cortex_covariance_mod <- Brain_Cortex_covariance %>% left_join(snps_mapping, by=c("RSID1"="rsid")) %>% select(GENE, varID, RSID2, VALUE) %>% rename(RSID1 = varID)
+Brain_Cortex_covariance_mod <- Brain_Cortex_covariance_mod %>% left_join(snps_mapping, by=c("RSID2"="rsid")) %>% select(GENE, RSID1, varID, VALUE) %>% rename(RSID2 = varID)
+write.table(Brain_Cortex_covariance_mod, glue::glue("{MODEL}/GTEx-V7-en/gtex_v7_Brain_Cortex_imputed_eur_covariances_varID.txt"), quote=FALSE, row.names=FALSE)
+```
+
+```{r}
+Whole_Blood_model = glue::glue("{MODEL}/GTEx-V7-en/gtex_v7_Whole_Blood_imputed_europeans_tw_0.5_signif.db")
+Whole_Blood_covariance = fread(glue::glue("{MODEL}/GTEx-V7-en/gtex_v7_Whole_Blood_imputed_eur_covariances.txt.gz"), header=TRUE, sep=" ")
+conn <- dbConnect(RSQLite::SQLite(), Whole_Blood_model)
+snps <- dbGetQuery(conn, 'SELECT rsid, varID FROM weights')
+dbDisconnect(conn)
+```
+
+```{r}
+snps_mapping <- distinct(snps)
+Whole_Blood_covariance_mod <- Whole_Blood_covariance %>% left_join(snps_mapping, by=c("RSID1"="rsid")) %>% select(GENE, varID, RSID2, VALUE) %>% rename(RSID1 = varID)
+Whole_Blood_covariance_mod <- Whole_Blood_covariance_mod %>% left_join(snps_mapping, by=c("RSID2"="rsid")) %>% select(GENE, RSID1, varID, VALUE) %>% rename(RSID2 = varID)
+write.table(Whole_Blood_covariance_mod, glue::glue("{MODEL}/GTEx-V7-en/gtex_v7_Whole_Blood_imputed_eur_covariances_varID.txt"), quote=FALSE, row.names=FALSE)
+```
+
+Then compress the new covariances matrices.
+```{bash}
+gzip $MODEL/psychencode_model/psychencode_varID.txt
+gzip $MODEL/GTEx-V7-en/gtex_v7_Brain_Cortex_imputed_eur_covariances_varID.txt
+gzip $MODEL/GTEx-V7-en/gtex_v7_Whole_Blood_imputed_eur_covariances_varID.txt
 ```
 
 # Run S-PrediXcan
 Run S-PrediXcan on SCZ GWAS with psychencode model, and repeat for GTEx Brain Cortex and Whole Blood models.
-```{bash spredixcan_psychencode}
+
+```{bash}
 python3 $METAXCAN/SPrediXcan.py --gwas_file $DATA/clozuk_pgc2.meta.sumstats.out.txt \
 --model_db_path $MODEL/psychencode_model/psychencode.db \
---covariance $MODEL/psychencode_model/psychencode.txt.gz \
---keep_non_rsid --model_db_snp_key varID \
+--covariance $MODEL/psychencode_model/psychencode_varID.txt.gz \
+--keep_non_rsid --additional_output --model_db_snp_key varID \
 --or_column OR \
 --pvalue_column P \
 --snp_column varID \
 --non_effect_allele_column A2 \
 --effect_allele_column A1 \
 --throw \
---verbosity 1 \
---overwrite \
---output_file $RESULTS/spredixcan/eqtl/clozuk_pgc2/clozuk_pgc2_psychencode.csv > $RESULTS/spredixcan/eqtl/clozuk_pgc2/clozuk_psychencode_output.txt 2>&1
-```
-
-```{bash}
-python3 $METAXCAN/SPrediXcan.py --gwas_file $DATA/clozuk_pgc2.meta.sumstats.out.txt \
---model_db_path $MODEL/psychencode_model/psychencode.db \
---covariance $MODEL/psychencode_model/psychencode.txt.gz \
---keep_non_rsid --model_db_snp_key varID \
---or_column OR \
---pvalue_column P \
---snp_column varID \
---non_effect_allele_column A2 \
---effect_allele_column A1 \
---verbosity 1 \
---throw \
---overwrite \
---output_file $RESULTS/spredixcan/eqtl/clozuk_pgc2/clozuk_pgc2_psychencode.csv > $RESULTS/spredixcan/eqtl/clozuk_pgc2/clozuk_psychencode_output.txt 2>&1
+--output_file $RESULTS/spredixcan/eqtl/clozuk_pgc2/clozuk_pgc2_psychencode.csv
 ```
 
 ```{bash}
 python3 $METAXCAN/SPrediXcan.py --gwas_file $DATA/clozuk_pgc2.meta.sumstats.out.txt \
 --model_db_path $MODEL/GTEx-V7-en/gtex_v7_Brain_Cortex_imputed_europeans_tw_0.5_signif.db \
---covariance $MODEL/GTEx-V7-en/gtex_v7_Brain_Cortex_imputed_eur_covariances.txt.gz \
---keep_non_rsid --model_db_snp_key varID \
+--covariance $MODEL/GTEx-V7-en/gtex_v7_Brain_Cortex_imputed_eur_covariances_varID.txt.gz \
+--keep_non_rsid --additional_output --model_db_snp_key varID \
 --or_column OR \
 --pvalue_column P \
 --snp_column varID_v7 \
 --non_effect_allele_column A2 \
 --effect_allele_column A1 \
---verbosity 1 \
 --throw \
---overwrite \
---output_file $RESULTS/spredixcan/eqtl/clozuk_pgc2/clozuk_pgc2_Brain_Cortex.csv > $RESULTS/spredixcan/eqtl/clozuk_pgc2/clozuk_Brain_Cortex_output.txt 2>&1
+--output_file $RESULTS/spredixcan/eqtl/clozuk_pgc2/clozuk_pgc2_Brain_Cortex.csv
 ```
 
-```{bash M03 clozuk}
-python3 $METAXCAN/M03_betas.py --gwas_file $DATA/clozuk_pgc2.meta.sumstats.out.txt \
---model_db_path $MODEL/GTEx-V7-en/gtex_v7_Brain_Cortex_imputed_europeans_tw_0.5_signif.db \
---model_db_snp_key varID \
+```{bash}
+python3 $METAXCAN/SPrediXcan.py --gwas_file $DATA/clozuk_pgc2.meta.sumstats.out.txt \
+--model_db_path $MODEL/GTEx-V7-en/gtex_v7_Whole_Blood_imputed_europeans_tw_0.5_signif.db \
+--covariance $MODEL/GTEx-V7-en/gtex_v7_Whole_Blood_imputed_eur_covariances_varID.txt.gz \
+--keep_non_rsid --additional_output --model_db_snp_key varID \
 --or_column OR \
 --pvalue_column P \
 --snp_column varID_v7 \
 --non_effect_allele_column A2 \
 --effect_allele_column A1 \
---keep_non_rsid \
---verbosity 1 \
 --throw \
---output $RESULTS/spredixcan/eqtl/clozuk_pgc2/clozuk_pgc2_Brain_Cortex_M03_betas.txt
+--output_file $RESULTS/spredixcan/eqtl/clozuk_pgc2/clozuk_pgc2_Whole_Blood.csv
 ```
 
-```{bash M03 alcdep}
-python3 $METAXCAN/M03_betas.py --gwas_file $DATA/pgc_alcdep.aug2018_release/pgc_alcdep.eur_unrel_genotyped.aug2018_release.txt.gz \
---model_db_path $MODEL/GTEx-V7-en/gtex_v7_Brain_Cortex_imputed_europeans_tw_0.5_signif.db \
---or_column OR \
---pvalue_column P \
---snp_column SNP \
---non_effect_allele_column A2 \
---effect_allele_column A1 \
---keep_non_rsid \
---verbosity 1 \
---throw \
---output $RESULTS/spredixcan/eqtl/pgc_alcdep/pgc_alcdep.eur_Brain_Cortex_M03_betas.txt
+# S-PrediXcan Results
+```{r}
+spredixcan_association_psychencode = load_spredixcan_association(glue::glue("{RESULTS}/spredixcan/eqtl/clozuk_pgc2/clozuk_pgc2_psychencode.csv"), gencode_df)
+dim(spredixcan_association_psychencode)
+significant_genes_psychencode <- spredixcan_association_psychencode %>% filter(pvalue < 0.05/nrow(spredixcan_association_psychencode)) %>% arrange(pvalue)
 ```
 
+```{r}
+spredixcan_association_Brain_Cortex = load_spredixcan_association(glue::glue("{RESULTS}/spredixcan/eqtl/clozuk_pgc2/clozuk_pgc2_Brain_Cortex.csv"), gencode_df)
+dim(spredixcan_association_Brain_Cortex)
+significant_genes_Brain_Cortex <- spredixcan_association_Brain_Cortex %>% filter(pvalue < 0.05/nrow(spredixcan_association_Brain_Cortex)) %>% arrange(pvalue)
+```
+
+```{r}
+spredixcan_association_Whole_Blood = load_spredixcan_association(glue::glue("{RESULTS}/spredixcan/eqtl/clozuk_pgc2/clozuk_pgc2_Whole_Blood.csv"), gencode_df)
+dim(spredixcan_association_Whole_Blood)
+significant_genes_Whole_Blood <- spredixcan_association_Whole_Blood %>% filter(pvalue < 0.05/nrow(spredixcan_association_Whole_Blood)) %>% arrange(pvalue)
+```
+
+## Plot S-PrediXcan Association
+```{r}
+spredixcan_association_psychencode %>% arrange(pvalue) %>% ggplot(aes(pvalue)) + geom_histogram(bins=20)
+
+gg_qqplot(spredixcan_association_psychencode$pvalue)
+```
+
+```{r}
+spredixcan_association_Brain_Cortex %>% arrange(pvalue) %>% ggplot(aes(pvalue)) + geom_histogram(bins=20)
+
+gg_qqplot(spredixcan_association_Brain_Cortex$pvalue)
+```
+
+```{r}
+Brain_Cortex_psychencode_association = inner_join(spredixcan_association_Brain_Cortex, spredixcan_association_psychencode, by=c("gene"))
+dim(Brain_Cortex_psychencode_association)
+Brain_Cortex_psychencode_association %>% ggplot(aes(zscore.x, zscore.y)) + geom_point()
+```
+
+```{r}
+spredixcan_association_Whole_Blood %>% arrange(pvalue) %>% ggplot(aes(pvalue)) + geom_histogram(bins=20)
+
+gg_qqplot(spredixcan_association_Whole_Blood$pvalue)
+```
