@@ -208,7 +208,7 @@ spredixcan_association_Whole_Blood %>% arrange(pvalue) %>% select(gene, pvalue) 
 
 # Plot S-PrediXcan Association
 Manhattan plot and qq plot for alcohol dependence GWAS. There's only one or two significant peaks.
-```{r plot_gwas}
+```{r plot_gwas, eval=FALSE}
 alcdep_GWAS = read.table(glue::glue("{DATA}/pgc_alcdep.aug2018_release/pgc_alcdep.eur_unrel_genotyped.aug2018_release.txt.gz"), header=TRUE, sep=" ")
 manhattan(alcdep_GWAS, chr="CHR", bp="BP", snp="SNP", p="P" )
 gg_qqplot(alcdep_GWAS$P)
