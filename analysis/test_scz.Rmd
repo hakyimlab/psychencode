@@ -5,11 +5,12 @@ editor_options:
   chunk_output_type: console
 ---
 # Download Data
-I used a GWAS of Schizophrenia to test S-PrediXcan on the psychencode model against PredictDB models trained using GTEx v7 data, subsampled to use European samples. The GWAS was performed on unrelated genotyped individuals of European ancestry, with 33,426 cases and 54,065 controls. More info on the study: https://www.cell.com/cell/pdf/S0092-8674(18)30658-5.pdf?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0092867418306585%3Fshowall%3Dtrue. Download the GWAS: https://www.med.unc.edu/pgc/download-results/, filter by Schizophrenia, then Schizophrenia + Bipolar Disorder. The GTEx models can be downloaded on predictdb.org or with `wget "https://zenodo.org/record/3572799/files/GTEx-V7_HapMap-2017-11-29.tar.gz"`
-<<<<<<< HEAD
+I used a GWAS of Schizophrenia to test S-PrediXcan on the model generated from Gandal et al.'s Cross-Disorder TWAS, on http://resource.psychencode.org, on against PredictDB models trained on GTEx v7 data, subsampled to use European samples. The psychencode model db was based on elastic-net weights calculated in FUSION. Here is how they were generated: https://hakyimlab.github.io/psychencode/psychencode.html. The covariance matrix was calulated on a 1000 Genomes reference panel here: file:///Users/sabrinami/Github/analysis-sabrina/covariance_1000G_ref/covariances.html
 
-=======
->>>>>>> 5d5b66f7ff1fe45f3f1b4c5f3a16d73fb4b1af87
+The GWAS was performed on unrelated genotyped individuals of European ancestry, with 33,426 cases and 54,065 controls. More info on the study: https://www.cell.com/cell/pdf/S0092-8674(18)30658-5.pdf?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0092867418306585%3Fshowall%3Dtrue. Download the GWAS: https://www.med.unc.edu/pgc/download-results/, filter by Schizophrenia, then Schizophrenia + Bipolar Disorder.
+The GTEx models used elastic net, they can be downloaded by running `wget https://zenodo.org/record/3572799/files/GTEx-V7_HapMap-2017-11-29.tar.gz`. We compared the Whole Blood and Brain Cortex models to the psychencode model.
+
+
 # Definitions
 ```{bash, eval=FALSE}
 conda activate imlabtools
@@ -41,6 +42,7 @@ source(glue::glue("{CODE}/plotting_utils_functions.R"))
 
 gencode_df = load_gencode_df()
 ```
+
 # Run S-PrediXcan 
 Run S-PrediXcan on SCZ GWAS with psychencode model, and repeat for GTEx Brain Cortex and Whole Blood models.
 ```{bash, eval=FALSE}
@@ -103,8 +105,7 @@ significant_genes_Whole_Blood <- spredixcan_association_Whole_Blood %>% filter(p
 ```
 
 ## Plot S-PrediXcan Association
-<<<<<<< HEAD
-=======
+
 We can plot the intersection of genes from the association output for each model. PsychENCODE has a much larger sample size, so reports many more genes compared to the GTEx models.
 ```{r}
 genes <- list(Brain_Cortex = spredixcan_association_Brain_Cortex$gene,
@@ -120,7 +121,6 @@ significant_genes <- list(Brain_Cortex = significant_genes_Brain_Cortex$gene,
               Psychencode = significant_genes_psychencode$gene)
 upset(fromList(significant_genes), order.by = 'freq', empty.intersections = 'on')
 ```
->>>>>>> 5d5b66f7ff1fe45f3f1b4c5f3a16d73fb4b1af87
 
 For each of the models, we can make a histogram and Q-Q plot of the genes with their p-values, which confirm that all three find significant genes.
 ```{r}
@@ -158,7 +158,7 @@ zscore <- rbind(zscore_Brain_Cortex, zscore_psychencode, zscore_Whole_Blood)
 ggplot(zscore, aes(x=model, y= zscore)) + geom_violin() + geom_boxplot(width=.5) + ggtitle("Distribution of Association Z-score")
 ```
 
-We also compare z-scores between each model. Ideally, the z-scores calculated from multiple model are similar for each gene, so they would follow the identity line. The z-scores between PsychENCODE and GTEx Brain Cortex appear more consistent than the other pairs, which could mean that PsychENCODE model is reliable. First, plot the Brain Cortex and Psychencode z-scores:
+We also compare z-scores between each model. Ideally, the z-scores calculated from multiple model are similar for each gene, so they would follow the identity line. The z-scores between PsychENCODE and GTEx Brain Cortex appear more consistent than the other pairs, which could mean our model is reliable. First, plot the Brain Cortex and Psychencode z-scores:
 ```{r}
 Brain_Cortex_psychencode_zscores = inner_join(spredixcan_association_Brain_Cortex, spredixcan_association_psychencode, by=c("gene"))
 dim(Brain_Cortex_psychencode_zscores)
@@ -179,7 +179,3 @@ dim(Whole_Blood_Brain_Cortex_zscores)
 Whole_Blood_Brain_Cortex_zscores %>% ggplot(aes(zscore.x, zscore.y)) + geom_point() + ggtitle("S-PrediXcan z-score") + xlab("GTex Whole Blood") + ylab("GTEx Brain Cortex") + geom_abline(intercept = 0, slope = 1)
 ```
 
-<<<<<<< HEAD
-=======
-The z-scores between PsychENCODE and GTEx Brain Cortex appear more consistent than the other pairs, which suggests that PsychENCODE model is reliable.
->>>>>>> 5d5b66f7ff1fe45f3f1b4c5f3a16d73fb4b1af87

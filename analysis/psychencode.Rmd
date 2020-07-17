@@ -9,14 +9,14 @@ editor_options:
 
 # Introduction
 Gandal et al analyzed autism spectrum disorder, schizophrenia, and bipolar disorder across multiple levels of transcriptomic organization—gene expression, local splicing, transcript isoform expression, and coexpression networks for both protein-coding and noncoding genes to produce a quantitative, genome-wide resource. 
-They performed TWAS based on postmortem frontal and temporal cerebral cortex samples from 1695 adults. RNA-sequencing reads were aligned to the GRCh37.p13 (hg19) reference genome. We generated a model using elastic-net weights released by Gandal et al. LD was calculated using 1000 Genomes European reference panel.
+They performed TWAS based on 2,188 postmortem frontal and temporal cerebral cortex samples from 1,695 adults. RNA-sequencing reads were aligned to the GRCh37.p13 (hg19) reference genome. We generated a model using elastic-net weights released by Gandal et al.
 More info on the study: https://science.sciencemag.org/content/362/6420/eaat8127.
 The TWAS is available at http://resource.psychencode.org
 
 # Definitions
 Define variables in the terminal:
 ```{bash, eval=FALSE}
-export PRE="/Users/sabrinami/Github/psychencode"
+export PRE=/Users/sabrinami/Github/psychencode
 export CODE=$PRE/code
 export DATA=$PRE/data
 export OUTPUT=$PRE/output
