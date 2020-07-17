@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="sabrina-mi" />
+
+<meta name="date" content="2020-07-01" />
+
+<title>test</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">psychencode</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">test</h1>
+<h4 class="author">sabrina-mi</h4>
+<h4 class="date">2020-07-01</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2020-07-17
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
+</p>
+<p>
+<strong>Knit directory:</strong> <code>psychencode/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div class="panel-group" id="workflowr-checks">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20200622code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20200622)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20200622code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20200622)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongabsolute"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>File paths:</strong> absolute </a>
+</p>
+</div>
+<div id="strongFilepathsstrongabsolute" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Using absolute paths to the files within your workflowr project makes it difficult for you and others to run your code on a different machine. Change the absolute path(s) below to the suggested relative path(s) to make your code more reproducible.
+</p>
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th style="text-align:left;">
+absolute
+</th>
+<th style="text-align:left;">
+relative
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+/Users/sabrinami/Github/psychencode
+</td>
+<td style="text-align:left;">
+.
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomhakyimlabpsychencodetreea2d4866b002e971f015888c4f2f8e5370b5e2f4ctargetblanka2d4866a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/hakyimlab/psychencode/tree/a2d4866b002e971f015888c4f2f8e5370b5e2f4c" target="_blank">a2d4866</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomhakyimlabpsychencodetreea2d4866b002e971f015888c4f2f8e5370b5e2f4ctargetblanka2d4866a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/hakyimlab/psychencode/tree/a2d4866b002e971f015888c4f2f8e5370b5e2f4c" target="_blank">a2d4866</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Untracked files:
+    Untracked:  .DS_Store
+    Untracked:  models/
+    Untracked:  output/.DS_Store
+    Untracked:  output/test_results/
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/test_alcdep.Rmd</code>) and HTML (<code>docs/test_alcdep.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/hakyimlab/psychencode/blob/cd613c17ee5125a0dd34c79d9ab41c4ab48f9f79/analysis/test_alcdep.Rmd" target="_blank">cd613c1</a>
+</td>
+<td>
+sabrina-mi
+</td>
+<td>
+2020-07-14
+</td>
+<td>
+don’t know whats going on with clozuk gwas, but pgc gwas works well
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/hakyimlab/psychencode/blob/d9957ad33fe6fe3efb5d60097c213c5ae5aaa835/analysis/test_alcdep.Rmd" target="_blank">d9957ad</a>
+</td>
+<td>
+sabrina-mi
+</td>
+<td>
+2020-07-10
+</td>
+<td>
+GTEx model working
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/hakyimlab/psychencode/blob/643fdaa8abb8c0e30b422892cd03a2275462bee2/analysis/test_alcdep.Rmd" target="_blank">643fdaa</a>
+</td>
+<td>
+sabrina-mi
+</td>
+<td>
+2020-07-08
+</td>
+<td>
+predixcan tests
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="download-data" class="section level1">
+<h1>Download Data</h1>
+<p>I used a GWAS of alcohol dependence to test S-PrediXcan on the psychencode model against PredictDB models trained using GTEx v7 data, subsampled to use European samples. The GWAS was performed on unrelated genotyped individuals of European ancestry, with 8,485 cases and 20,272 controls. More info on the study: <a href="https://www.biorxiv.org/content/early/2018/03/10/257311" class="uri">https://www.biorxiv.org/content/early/2018/03/10/257311</a>. Download the GWAS: <a href="https://www.med.unc.edu/pgc/download-results/" class="uri">https://www.med.unc.edu/pgc/download-results/</a>, filter by Alcohol, the Alcohol Dependence. The GTEx models can be downloaded on predictdb.org or with <code>wget &quot;https://zenodo.org/record/3572799/files/GTEx-V7_HapMap-2017-11-29.tar.gz&quot;</code></p>
+</div>
+<div id="definitions" class="section level1">
+<h1>Definitions</h1>
+<pre class="bash"><code>conda activate imlabtools
+METAXCAN=/Users/sabrinami/Github/MetaXcan/software
+MODEL=/Users/sabrinami/Github/psychencode/models
+RESULTS=/Users/sabrinami/Github/psychencode/output/test_results
+DATA=/Users/sabrinami/Desktop/psychencode_test_data</code></pre>
+</div>
+<div id="metaxcan" class="section level1">
+<h1>MetaXcan</h1>
+<div id="run-predict" class="section level2">
+<h2>Run Predict</h2>
+<pre class="bash"><code>printf &quot;Predict expression with Psychencode model\n\n&quot;
+python3 $METAXCAN/Predict.py \
+--model_db_path $MODEL/psychencode_model/psychencode.db \
+--vcf_genotypes $DATA/1000G_hg37/ALL.chr1.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz \
+--vcf_mode genotyped \
+--prediction_output $RESULTS/predixcan/psychencode__predict.txt \
+--prediction_summary_output $RESULTS/predixcan/psychencode__summary.txt \
+--verbosity 9 \
+--throw</code></pre>
+<pre class="bash"><code>printf &quot;Predict expression with Brain Cortex model\n\n&quot;
+python3 $METAXCAN/Predict.py \
+--model_db_path $MODEL/GTEx-V7-en/gtex_v7_Brain_Cortex_imputed_europeans_tw_0.5_signif.db \
+--vcf_genotypes $DATA/1000G_hg37/ALL.chr1.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz \
+--vcf_mode genotyped \
+--prediction_output $RESULTS/predixcan/Brain_Cortex__predict.txt \
+--prediction_summary_output $RESULTS/predixcan/Brain_Cortex__summary.txt \
+--verbosity 9 \
+--throw</code></pre>
+<pre class="bash"><code>printf &quot;Predict expression with Whole Blood model\n\n&quot;
+python3 $METAXCAN/Predict.py \
+--model_db_path $MODEL/GTEx-V7-en/gtex_v7_Whole_Blood_imputed_europeans_tw_0.5_signif.db \
+--vcf_genotypes $DATA/1000G_hg37/ALL.chr1.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz \
+--vcf_mode genotyped \
+--prediction_output $RESULTS/predixcan/Whole_Blood__predict.txt \
+--prediction_summary_output $RESULTS/predixcan/Whole_Blood__summary.txt \
+--verbosity 9 \
+--throw</code></pre>
+</div>
+<div id="run-s-predixcan" class="section level2">
+<h2>Run S-PrediXcan</h2>
+<p>Run S-PrediXcan on alcohol dependence GWAS with psychencode model, then repeat with GTEx-V7-en Brain Cortex and Whole Blood models.</p>
+<pre class="bash"><code>python3 $METAXCAN/SPrediXcan.py --gwas_file $DATA/pgc_alcdep.aug2018_release/pgc_alcdep.eur_unrel_genotyped.aug2018_release.txt.gz \
+--model_db_path $MODEL/psychencode_model/psychencode.db \
+--covariance $MODEL/psychencode_model/psychencode.txt.gz \
+--output_file $RESULTS/spredixcan/eqtl/pgc_alcdep/pgc_alcdep.eur_psychencode.csv \
+--or_column OR \
+--pvalue_column P \
+--snp_column SNP \
+--non_effect_allele_column A2 \
+--effect_allele_column A1 \
+--separator &quot; &quot;</code></pre>
+<pre class="bash"><code>printf &quot;GTEx Brain Cortex model\n\n&quot;
+python3 $METAXCAN/SPrediXcan.py --gwas_file $DATA/pgc_alcdep.aug2018_release/pgc_alcdep.eur_unrel_genotyped.aug2018_release.txt.gz \
+--model_db_path $MODEL/GTEx-V7-en/gtex_v7_Brain_Cortex_imputed_europeans_tw_0.5_signif.db \
+--covariance $MODEL/GTEx-V7-en/gtex_v7_Brain_Cortex_imputed_eur_covariances.txt.gz \
+--overwrite --throw --verbosity 1 \
+--output_file $RESULTS/spredixcan/eqtl/pgc_alcdep/pgc_alcdep.eur_Brain_Cortex.csv \
+--or_column OR \
+--pvalue_column P \
+--snp_column SNP \
+--non_effect_allele_column A2 \
+--effect_allele_column A1 &gt; alcdep_Brain_Cortex_output.txt 2&gt;&amp;1
+</code></pre>
+<pre class="bash"><code>printf &quot;GTEx Whole Blood model\n\n&quot;
+python3 $METAXCAN/SPrediXcan.py --gwas_file $DATA/pgc_alcdep.aug2018_release/pgc_alcdep.eur_unrel_genotyped.aug2018_release.txt.gz \
+--model_db_path $MODEL/GTEx-V7-en/gtex_v7_Whole_Blood_imputed_europeans_tw_0.5_signif.db \
+--covariance $MODEL/GTEx-V7-en/gtex_v7_Whole_Blood_imputed_eur_covariances.txt.gz \
+--output_file $RESULTS/spredixcan/eqtl/pgc_alcdep/pgc_alcdep.eur_Whole_Blood.csv \
+--or_column OR \
+--pvalue_column P \
+--snp_column SNP \
+--non_effect_allele_column A2 \
+--effect_allele_column A1 \
+--separator &quot; &quot;</code></pre>
+</div>
+</div>
+<div id="compare-results" class="section level1">
+<h1>Compare Results</h1>
+<div id="definitions-1" class="section level2">
+<h2>Definitions</h2>
+<pre class="r"><code>PRE=&quot;/Users/sabrinami/Github/psychencode&quot;
+DATA=&quot;/Users/sabrinami/Desktop/psychencode_test_data&quot;
+RESULTS=glue::glue(&quot;{PRE}/output/test_results&quot;)
+CODE=glue::glue(&quot;{PRE}/code&quot;)
+source(glue::glue(&quot;{CODE}/load_data_functions.R&quot;))
+source(glue::glue(&quot;{CODE}/plotting_utils_functions.R&quot;))
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(qqman))
+
+gencode_df = load_gencode_df()</code></pre>
+</div>
+<div id="prediction-performance" class="section level2">
+<h2>Prediction Performance</h2>
+<p>Load prediction outputs into R.</p>
+<pre class="r"><code>prediction_fp_Whole_Blood = glue::glue(&quot;{RESULTS}/predixcan/Whole_Blood__predict.txt&quot;)
+
+
+## Read the Predict.py output into a dataframe. This function reorganizes the data and adds gene names.
+predicted_expression_Whole_Blood = load_predicted_expression(prediction_fp_Whole_Blood, gencode_df)
+
+head(predicted_expression_Whole_Blood)</code></pre>
+<pre><code># A tibble: 6 x 7
+  FID    IID    gene_id    predicted_expres… gene_name  chromosome region_id    
+  &lt;fct&gt;  &lt;fct&gt;  &lt;chr&gt;                  &lt;dbl&gt; &lt;fct&gt;      &lt;fct&gt;      &lt;fct&gt;        
+1 HG000… HG000… ENSG00000…           -1.08   RP11-206L… chr1       region_chr1_…
+2 HG000… HG000… ENSG00000…           -0.302  ATAD3C     chr1       region_chr1_…
+3 HG000… HG000… ENSG00000…           -0.265  FAM87B     chr1       region_chr1_…
+4 HG000… HG000… ENSG00000…           -1.35   LINC00115  chr1       region_chr1_…
+5 HG000… HG000… ENSG00000…           -2.67   TAS1R3     chr1       region_chr1_…
+6 HG000… HG000… ENSG00000…           -0.0710 SSU72      chr1       region_chr1_…</code></pre>
+<pre class="r"><code>## read summary of prediction, number of SNPs per gene, cross validated prediction performance
+prediction_summary_Whole_Blood = load_prediction_summary(glue::glue(&quot;{RESULTS}/predixcan/Whole_Blood__summary.txt&quot;), gencode_df)
+## number of genes with a prediction model
+dim(prediction_summary_Whole_Blood)</code></pre>
+<pre><code>[1] 6297    8</code></pre>
+<pre class="r"><code>head(prediction_summary_Whole_Blood)</code></pre>
+<pre><code>             gene n_snps_in_model n_snps_used pred_perf_r2 pred_perf_pval
+1 ENSG00000000457              19          19   0.06784837   1.786471e-06
+2 ENSG00000000460              31          31   0.04532282   1.499214e-04
+3 ENSG00000000938               9           9   0.01759910   1.954026e-02
+4 ENSG00000001084               2          NA   0.02652882   3.875334e-03
+5 ENSG00000001167              17          NA   0.03930124   4.607071e-04
+6 ENSG00000001460              11          11   0.04711175   1.132466e-04
+  gene_name chromosome                       region_id
+1     SCYL3       chr1 region_chr1_169117086_170588635
+2  C1orf112       chr1 region_chr1_169117086_170588635
+3       FGR       chr1   region_chr1_27075376_29689034
+4      GCLC       chr6   region_chr6_53414304_55603472
+5      NFYA       chr6   region_chr6_40377376_42070983
+6     STPG1       chr1   region_chr1_23594100_25190354</code></pre>
+<pre class="r"><code>prediction_fp_psychencode = glue::glue(&quot;{RESULTS}/predixcan/psychencode__predict.txt&quot;)
+predicted_expression_psychencode = load_predicted_expression(prediction_fp_psychencode, gencode_df)
+
+head(predicted_expression_psychencode)</code></pre>
+<pre><code># A tibble: 6 x 7
+  FID    IID    gene_id    predicted_expres… gene_name chromosome region_id     
+  &lt;fct&gt;  &lt;fct&gt;  &lt;chr&gt;                  &lt;dbl&gt; &lt;fct&gt;     &lt;fct&gt;      &lt;fct&gt;         
+1 HG000… HG000… ENSG00000…          -0.0890  ISG15     chr1       region_chr1_1…
+2 HG000… HG000… ENSG00000…          -0.0231  HES4      chr1       region_chr1_1…
+3 HG000… HG000… ENSG00000…          -0.0429  ATAD3B    chr1       region_chr1_1…
+4 HG000… HG000… ENSG00000…          -0.00230 MXRA8     chr1       region_chr1_1…
+5 HG000… HG000… ENSG00000…          -0.0121  PERM1     chr1       region_chr1_1…
+6 HG000… HG000… ENSG00000…           0.170   ATAD3C    chr1       region_chr1_1…</code></pre>
+<pre class="r"><code>prediction_summary_psychencode = load_prediction_summary(glue::glue(&quot;{RESULTS}/predixcan/psychencode__summary.txt&quot;), gencode_df)
+dim(prediction_summary_psychencode)</code></pre>
+<pre><code>[1] 14378     8</code></pre>
+<pre class="r"><code>head(prediction_summary_psychencode)</code></pre>
+<pre><code>             gene n_snps_in_model n_snps_used pred_perf_r2 pred_perf_pval
+1 ENSG00000000457              26          26           NA             NA
+2 ENSG00000000460              48          48           NA             NA
+3 ENSG00000000971              21          19           NA             NA
+4 ENSG00000001036              14          NA           NA             NA
+5 ENSG00000001084              41          NA           NA             NA
+6 ENSG00000001167               9          NA           NA             NA
+  gene_name chromosome                       region_id
+1     SCYL3       chr1 region_chr1_169117086_170588635
+2  C1orf112       chr1 region_chr1_169117086_170588635
+3       CFH       chr1 region_chr1_196207071_197342384
+4     FUCA2       chr6 region_chr6_141967342_144998674
+5      GCLC       chr6   region_chr6_53414304_55603472
+6      NFYA       chr6   region_chr6_40377376_42070983</code></pre>
+<pre class="r"><code>prediction_fp_Brain_Cortex = glue::glue(&quot;{RESULTS}/predixcan/Brain_Cortex__predict.txt&quot;)
+
+predicted_expression_Brain_Cortex = load_predicted_expression(prediction_fp_Brain_Cortex, gencode_df)
+
+head(predicted_expression_Brain_Cortex)</code></pre>
+<pre><code># A tibble: 6 x 7
+  FID    IID    gene_id    predicted_expres… gene_name chromosome region_id     
+  &lt;fct&gt;  &lt;fct&gt;  &lt;chr&gt;                  &lt;dbl&gt; &lt;fct&gt;     &lt;fct&gt;      &lt;fct&gt;         
+1 HG000… HG000… ENSG00000…            0.0873 TNFRSF4   chr1       region_chr1_1…
+2 HG000… HG000… ENSG00000…           -0.883  LINC00115 chr1       region_chr1_1…
+3 HG000… HG000… ENSG00000…            0.0372 SLC35E2   chr1       region_chr1_1…
+4 HG000… HG000… ENSG00000…            0.773  RP1-283E… chr1       region_chr1_1…
+5 HG000… HG000… ENSG00000…            0.487  NDUFB4P8  chr1       region_chr1_1…
+6 HG000… HG000… ENSG00000…            1.89   MXRA8     chr1       region_chr1_1…</code></pre>
+<pre class="r"><code>prediction_summary_Brain_Cortex = load_prediction_summary(glue::glue(&quot;{RESULTS}/predixcan/Brain_Cortex__summary.txt&quot;), gencode_df)
+dim(prediction_summary_Brain_Cortex)</code></pre>
+<pre><code>[1] 4332    8</code></pre>
+<pre class="r"><code>head(prediction_summary_Brain_Cortex)</code></pre>
+<pre><code>             gene n_snps_in_model n_snps_used pred_perf_r2 pred_perf_pval
+1 ENSG00000000419             115          NA   0.05285449   1.509551e-02
+2 ENSG00000001084              10          NA   0.11134301   3.222470e-04
+3 ENSG00000002016              21          NA   0.26224973   1.146342e-09
+4 ENSG00000002549               7          NA   0.07884824   2.493767e-03
+5 ENSG00000002933              40          NA   0.12714419   4.978505e-05
+6 ENSG00000003056              26          NA   0.04939641   1.950023e-02
+  gene_name chromosome                       region_id
+1      DPM1      chr20  region_chr20_50623121_53856010
+2      GCLC       chr6   region_chr6_53414304_55603472
+3     RAD52      chr12       region_chr12_44631_971165
+4      LAP3       chr4   region_chr4_17381699_18840251
+5  TMEM176A       chr7 region_chr7_150143569_151014417
+6      M6PR      chr12   region_chr12_8878799_10328935</code></pre>
+<p>Load observed expression.</p>
+<pre class="r"><code>observed_expression = read.csv(glue::glue(&quot;{DATA}/GEUVADIS.observed_df.csv&quot;))</code></pre>
+<p>Merge predicted expression with observed expression, and calculate correlation between predicted and observed expression for each model.</p>
+<pre class="r"><code>merged_Whole_Blood = merge(predicted_expression_Whole_Blood, observed_expression, by = c(&quot;gene_id&quot;, &quot;IID&quot;))
+# calculate correlation between predicted and observed expression for each gene
+correlation_Whole_Blood = merged_Whole_Blood %&gt;% group_by(gene_id) %&gt;% summarise(corr = cor(predicted_expression, observed_expression, method = &quot;spearman&quot;))
+summary(correlation_Whole_Blood)</code></pre>
+<pre><code>   gene_id               corr          
+ Length:560         Min.   :-0.495534  
+ Class :character   1st Qu.:-0.008388  
+ Mode  :character   Median : 0.059699  
+                    Mean   : 0.076672  
+                    3rd Qu.: 0.137423  
+                    Max.   : 0.831743  </code></pre>
+<pre class="r"><code>merged_psychencode = merge(predicted_expression_psychencode, observed_expression, by = c(&quot;gene_id&quot;, &quot;IID&quot;))
+# calculate correlation between predicted and observed expression for each gene
+correlation_psychencode = merged_psychencode %&gt;% group_by(gene_id) %&gt;% summarise(corr = cor(predicted_expression, observed_expression, method = &quot;spearman&quot;))
+summary(correlation_psychencode)</code></pre>
+<pre><code>   gene_id               corr         
+ Length:1151        Min.   :-0.55006  
+ Class :character   1st Qu.:-0.02436  
+ Mode  :character   Median : 0.02961  
+                    Mean   : 0.04690  
+                    3rd Qu.: 0.09639  
+                    Max.   : 0.86425  </code></pre>
+<pre class="r"><code>merged_Brain_Cortex = merge(predicted_expression_Brain_Cortex, observed_expression, by = c(&quot;gene_id&quot;, &quot;IID&quot;))
+# calculate correlation between predicted and observed expression for each gene
+correlation_Brain_Cortex = merged_Brain_Cortex %&gt;% group_by(gene_id) %&gt;% summarise(corr = cor(predicted_expression, observed_expression, method = &quot;spearman&quot;))
+summary(correlation_Brain_Cortex)</code></pre>
+<pre><code>   gene_id               corr         
+ Length:334         Min.   :-0.53217  
+ Class :character   1st Qu.:-0.02136  
+ Mode  :character   Median : 0.03431  
+                    Mean   : 0.06777  
+                    3rd Qu.: 0.12802  
+                    Max.   : 0.84747  </code></pre>
+</div>
+<div id="s-predixcan-results" class="section level2">
+<h2>S-PrediXcan Results</h2>
+<p>Load S-PrediXcan association output into R, and check for significant genes.</p>
+<pre class="r"><code>spredixcan_association_psychencode = load_spredixcan_association(glue::glue(&quot;{RESULTS}/spredixcan/eqtl/pgc_alcdep/pgc_alcdep.eur_psychencode.csv&quot;), gencode_df)
+dim(spredixcan_association_psychencode)</code></pre>
+<pre><code>[1] 14348    14</code></pre>
+<pre class="r"><code>spredixcan_association_psychencode %&gt;% filter(pvalue &lt; 0.05/nrow(spredixcan_association_psychencode))</code></pre>
+<pre><code> [1] gene            zscore          effect_size     pvalue         
+ [5] var_g           pred_perf_r2    pred_perf_pval  pred_perf_qval 
+ [9] n_snps_used     n_snps_in_cov   n_snps_in_model gene_name      
+[13] chromosome      region_id      
+&lt;0 rows&gt; (or 0-length row.names)</code></pre>
+<pre class="r"><code>spredixcan_association_Brain_Cortex = load_spredixcan_association(glue::glue(&quot;{RESULTS}/spredixcan/eqtl/pgc_alcdep/pgc_alcdep.eur_Brain_Cortex.csv&quot;), gencode_df)
+dim(spredixcan_association_Brain_Cortex)</code></pre>
+<pre><code>[1] 4323   14</code></pre>
+<pre class="r"><code>spredixcan_association_Brain_Cortex %&gt;% filter(pvalue &lt; 0.05/nrow(spredixcan_association_Brain_Cortex))</code></pre>
+<pre><code> [1] gene            zscore          effect_size     pvalue         
+ [5] var_g           pred_perf_r2    pred_perf_pval  pred_perf_qval 
+ [9] n_snps_used     n_snps_in_cov   n_snps_in_model gene_name      
+[13] chromosome      region_id      
+&lt;0 rows&gt; (or 0-length row.names)</code></pre>
+<pre class="r"><code>spredixcan_association_Brain_Cortex %&gt;% arrange(pvalue) %&gt;% select(gene, pvalue) %&gt;% head</code></pre>
+<pre><code>             gene       pvalue
+1 ENSG00000230528 0.0006159278
+2 ENSG00000153291 0.0009708806
+3 ENSG00000100395 0.0018640389
+4 ENSG00000158270 0.0027746399
+5 ENSG00000215504 0.0030597439
+6 ENSG00000133107 0.0031635336</code></pre>
+<pre class="r"><code>spredixcan_association_Whole_Blood = load_spredixcan_association(glue::glue(&quot;{RESULTS}/spredixcan/eqtl/pgc_alcdep/pgc_alcdep.eur_Whole_Blood.csv&quot;), gencode_df)
+dim(spredixcan_association_Whole_Blood)</code></pre>
+<pre><code>[1] 6289   14</code></pre>
+<pre class="r"><code>spredixcan_association_Whole_Blood %&gt;% filter(pvalue &lt; 0.05/nrow(spredixcan_association_Whole_Blood))</code></pre>
+<pre><code> [1] gene            zscore          effect_size     pvalue         
+ [5] var_g           pred_perf_r2    pred_perf_pval  pred_perf_qval 
+ [9] n_snps_used     n_snps_in_cov   n_snps_in_model gene_name      
+[13] chromosome      region_id      
+&lt;0 rows&gt; (or 0-length row.names)</code></pre>
+<pre class="r"><code>spredixcan_association_Whole_Blood %&gt;% arrange(pvalue) %&gt;% select(gene, pvalue) %&gt;% head</code></pre>
+<pre><code>             gene       pvalue
+1 ENSG00000062282 5.877502e-05
+2 ENSG00000230207 4.113094e-04
+3 ENSG00000115758 5.272995e-04
+4 ENSG00000070087 7.088832e-04
+5 ENSG00000244691 7.224511e-04
+6 ENSG00000111886 7.780464e-04</code></pre>
+</div>
+</div>
+<div id="plot-s-predixcan-association" class="section level1">
+<h1>Plot S-PrediXcan Association</h1>
+<p>Manhattan plot and qq plot for alcohol dependence GWAS. There’s only one or two significant peaks.</p>
+<pre class="r"><code>alcdep_GWAS = read.table(glue::glue(&quot;{DATA}/pgc_alcdep.aug2018_release/pgc_alcdep.eur_unrel_genotyped.aug2018_release.txt.gz&quot;), header=TRUE, sep=&quot; &quot;)
+manhattan(alcdep_GWAS, chr=&quot;CHR&quot;, bp=&quot;BP&quot;, snp=&quot;SNP&quot;, p=&quot;P&quot; )
+gg_qqplot(alcdep_GWAS$P)</code></pre>
+<p>Plot p-values of association output.</p>
+<pre class="r"><code>spredixcan_association_Brain_Cortex %&gt;% arrange(pvalue) %&gt;% ggplot(aes(pvalue)) + geom_histogram(bins=20)</code></pre>
+<p><img src="figure/test_alcdep.Rmd/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>gg_qqplot(spredixcan_association_Brain_Cortex$pvalue)</code></pre>
+<p><img src="figure/test_alcdep.Rmd/unnamed-chunk-19-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>spredixcan_association_psychencode %&gt;% arrange(pvalue) %&gt;% ggplot(aes(pvalue)) + geom_histogram(bins=20)</code></pre>
+<pre><code>Warning: Removed 32 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/test_alcdep.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>gg_qqplot(spredixcan_association_psychencode$pvalue)</code></pre>
+<p><img src="figure/test_alcdep.Rmd/unnamed-chunk-20-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>Brain_Cortex_psychencode_association = inner_join(spredixcan_association_Brain_Cortex, spredixcan_association_psychencode, by=c(&quot;gene&quot;))
+dim(Brain_Cortex_psychencode_association)</code></pre>
+<pre><code>[1] 3414   27</code></pre>
+<pre class="r"><code>Brain_Cortex_psychencode_association %&gt;% ggplot(aes(zscore.x, zscore.y)) + geom_point()</code></pre>
+<pre><code>Warning: Removed 6 rows containing missing values (geom_point).</code></pre>
+<p><img src="figure/test_alcdep.Rmd/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>spredixcan_association_Whole_Blood %&gt;% arrange(pvalue) %&gt;% ggplot(aes(pvalue)) + geom_histogram(bins=20)</code></pre>
+<p><img src="figure/test_alcdep.Rmd/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>gg_qqplot(spredixcan_association_Whole_Blood$pvalue)</code></pre>
+<p><img src="figure/test_alcdep.Rmd/unnamed-chunk-22-2.png" width="672" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.6.2 (2019-12-12)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS Mojave 10.14.6
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] qqman_0.1.4     forcats_0.4.0   stringr_1.4.0   dplyr_0.8.3    
+ [5] purrr_0.3.3     readr_1.3.1     tidyr_1.0.0     tibble_2.1.3   
+ [9] ggplot2_3.3.0   tidyverse_1.3.0
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_1.0.3       lubridate_1.7.4  lattice_0.20-38  assertthat_0.2.1
+ [5] zeallot_0.1.0    rprojroot_1.3-2  digest_0.6.23    utf8_1.1.4      
+ [9] R6_2.4.1         cellranger_1.1.0 backports_1.1.5  reprex_0.3.0    
+[13] evaluate_0.14    httr_1.4.1       highr_0.8        pillar_1.4.3    
+[17] rlang_0.4.2      readxl_1.3.1     rstudioapi_0.10  whisker_0.4     
+[21] rmarkdown_2.1    labeling_0.3     munsell_0.5.0    broom_0.5.3     
+[25] compiler_3.6.2   httpuv_1.5.3.1   modelr_0.1.5     xfun_0.12       
+[29] pkgconfig_2.0.3  htmltools_0.4.0  tidyselect_0.2.5 workflowr_1.6.2 
+[33] fansi_0.4.1      calibrate_1.7.7  crayon_1.3.4     dbplyr_1.4.2    
+[37] withr_2.1.2      later_1.0.0      MASS_7.3-51.4    grid_3.6.2      
+[41] nlme_3.1-142     jsonlite_1.6     gtable_0.3.0     lifecycle_0.1.0 
+[45] DBI_1.1.0        git2r_0.27.1     magrittr_1.5     scales_1.1.0    
+[49] cli_2.0.1        stringi_1.4.5    farver_2.0.3     fs_1.3.1        
+[53] promises_1.1.0   xml2_1.2.2       generics_0.0.2   vctrs_0.2.1     
+[57] tools_3.6.2      glue_1.3.1       hms_0.5.3        yaml_2.2.0      
+[61] colorspace_1.4-1 rvest_0.3.5      knitr_1.27       haven_2.2.0     </code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
