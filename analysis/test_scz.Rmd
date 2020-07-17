@@ -105,23 +105,6 @@ significant_genes_Whole_Blood <- spredixcan_association_Whole_Blood %>% filter(p
 ```
 
 ## Plot S-PrediXcan Association
-
-We can plot the intersection of genes from the association output for each model. PsychENCODE has a much larger sample size, so reports many more genes compared to the GTEx models.
-```{r}
-genes <- list(Brain_Cortex = spredixcan_association_Brain_Cortex$gene,
-              Whole_Blood = spredixcan_association_Whole_Blood$gene,
-              Psychencode = spredixcan_association_psychencode$gene)
-upset(fromList(genes), order.by = 'freq', empty.intersections = 'on')
-```
-
-When we plot the intersection of significant genes, there is nice overlap.
-```{r}
-significant_genes <- list(Brain_Cortex = significant_genes_Brain_Cortex$gene,
-              Whole_Blood = significant_genes_Whole_Blood$gene,
-              Psychencode = significant_genes_psychencode$gene)
-upset(fromList(significant_genes), order.by = 'freq', empty.intersections = 'on')
-```
-
 For each of the models, we can make a histogram and Q-Q plot of the genes with their p-values, which confirm that all three find significant genes.
 ```{r}
 spredixcan_association_psychencode %>% arrange(pvalue) %>% ggplot(aes(pvalue)) + geom_histogram(bins=20) + ggtitle("Distribution of P-value (PsychENCODE)")
