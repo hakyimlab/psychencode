@@ -8,4 +8,8 @@ editor_options:
   chunk_output_type: console
 ---
 
-Welcome to my research website.
+- [x] Steps to format psyencode prediction to predictdb format [here](https://hakyimlab.github.io/psychencode/psychencode.html)
+
+- [ ] calculate covariances to provide LD information for S-PrediXcan and other summary based Xcan methods
+
+
