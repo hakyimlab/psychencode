@@ -401,7 +401,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-07-17
+<strong>Last updated:</strong> 2020-07-19
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 5 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 2
@@ -516,29 +516,33 @@ relative
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomhakyimlabpsychencodetree4deb67dd8b373c06e64ef414c70771e02fd87747targetblank4deb67da"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/hakyimlab/psychencode/tree/4deb67dd8b373c06e64ef414c70771e02fd87747" target="_blank">4deb67d</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomhakyimlabpsychencodetreed0856a5044e87b0c5e88282f7d8ba0620425549ctargetblankd0856a5a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/hakyimlab/psychencode/tree/d0856a5044e87b0c5e88282f7d8ba0620425549c" target="_blank">d0856a5</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomhakyimlabpsychencodetree4deb67dd8b373c06e64ef414c70771e02fd87747targetblank4deb67da" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomhakyimlabpsychencodetreed0856a5044e87b0c5e88282f7d8ba0620425549ctargetblankd0856a5a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/hakyimlab/psychencode/tree/4deb67dd8b373c06e64ef414c70771e02fd87747" target="_blank">4deb67d</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/hakyimlab/psychencode/tree/d0856a5044e87b0c5e88282f7d8ba0620425549c" target="_blank">d0856a5</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 </p>
 <pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    analysis/.DS_Store
+    Ignored:    output/.DS_Store
+
 Untracked files:
-    Untracked:  .DS_Store
-    Untracked:  analysis/figure/
     Untracked:  models/
-    Untracked:  output/.DS_Store
     Untracked:  output/test_results/
 
 Unstaged changes:
+    Modified:   analysis/calculate_covariances.Rmd
+    Modified:   analysis/generate_weights.Rmd
     Modified:   analysis/test_scz.Rmd
 
 </code></pre>
@@ -578,6 +582,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/hakyimlab/psychencode/blob/1487151ce2075d223181a6eb4e73aa6fd38cb7d0/analysis/test_scz.Rmd" target="_blank">1487151</a>
+</td>
+<td>
+sabrina-mi
+</td>
+<td>
+2020-07-19
+</td>
+<td>
+add covariance scripts
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/hakyimlab/psychencode/b4b782b4fefb7486315d998bc9d9d1d5c1ce0d65/docs/test_scz.html" target="_blank">b4b782b</a>
+</td>
+<td>
+sabrina-mi
+</td>
+<td>
+2020-07-17
+</td>
+<td>
+updated htmls
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -740,7 +778,7 @@ predixcan tests
 </div>
 <div id="download-data" class="section level1">
 <h1>Download Data</h1>
-<p>I used a GWAS of Schizophrenia to test S-PrediXcan on the model generated from Gandal et al.’s Cross-Disorder TWAS, on <a href="http://resource.psychencode.org" class="uri">http://resource.psychencode.org</a>, on against PredictDB models trained on GTEx v7 data, subsampled to use European samples. The psychencode model db was based on elastic-net weights calculated in FUSION. Here is how they were generated: <a href="https://hakyimlab.github.io/psychencode/psychencode.html" class="uri">https://hakyimlab.github.io/psychencode/psychencode.html</a>. The covariance matrix was calulated on a 1000 Genomes reference panel here: <a href="file:///Users/sabrinami/Github/analysis-sabrina/covariance_1000G_ref/covariances.html" class="uri">file:///Users/sabrinami/Github/analysis-sabrina/covariance_1000G_ref/covariances.html</a></p>
+<p>I used a GWAS of Schizophrenia to test S-PrediXcan on the model generated from Gandal et al.’s Cross-Disorder TWAS, on <a href="http://resource.psychencode.org" class="uri">http://resource.psychencode.org</a>, on against PredictDB models trained on GTEx v7 data, subsampled to use European samples. The psychencode model db was based on elastic-net weights calculated in FUSION. Here is how they were generated: <a href="https://hakyimlab.github.io/psychencode/generate_weights.html" class="uri">https://hakyimlab.github.io/psychencode/generate_weights.html</a>. The covariance matrix was calulated on a 1000 Genomes reference panel here: <a href="https://hakyimlab.github.io/psychencode/calculate_covariances.html" class="uri">https://hakyimlab.github.io/psychencode/calculate_covariances.html</a></p>
 <p>The GWAS was performed on unrelated genotyped individuals of European ancestry, with 33,426 cases and 54,065 controls. More info on the study: <a href="https://www.cell.com/cell/pdf/S0092-8674(18)30658-5.pdf?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0092867418306585%3Fshowall%3Dtrue" class="uri">https://www.cell.com/cell/pdf/S0092-8674(18)30658-5.pdf?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0092867418306585%3Fshowall%3Dtrue</a>. Download the GWAS: <a href="https://www.med.unc.edu/pgc/download-results/" class="uri">https://www.med.unc.edu/pgc/download-results/</a>, filter by Schizophrenia, then Schizophrenia + Bipolar Disorder. The GTEx models used elastic net, they can be downloaded by running <code>wget https://zenodo.org/record/3572799/files/GTEx-V7_HapMap-2017-11-29.tar.gz</code>. We compared the Whole Blood and Brain Cortex models to the psychencode model.</p>
 </div>
 <div id="definitions" class="section level1">
@@ -821,22 +859,281 @@ dim(spredixcan_association_Whole_Blood)</code></pre>
 <pre class="r"><code>spredixcan_association_psychencode %&gt;% arrange(pvalue) %&gt;% ggplot(aes(pvalue)) + geom_histogram(bins=20) + ggtitle(&quot;Distribution of P-value (PsychENCODE)&quot;)</code></pre>
 <pre><code>Warning: Removed 31 rows containing non-finite values (stat_bin).</code></pre>
 <p><img src="figure/test_scz.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/hakyimlab/psychencode/blob/b4b782b4fefb7486315d998bc9d9d1d5c1ce0d65/docs/figure/test_scz.Rmd/unnamed-chunk-8-1.png" target="_blank">b4b782b</a>
+</td>
+<td>
+sabrina-mi
+</td>
+<td>
+2020-07-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>gg_qqplot(spredixcan_association_psychencode$pvalue)</code></pre>
 <p><img src="figure/test_scz.Rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-2">
+Past versions of unnamed-chunk-8-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/hakyimlab/psychencode/blob/b4b782b4fefb7486315d998bc9d9d1d5c1ce0d65/docs/figure/test_scz.Rmd/unnamed-chunk-8-2.png" target="_blank">b4b782b</a>
+</td>
+<td>
+sabrina-mi
+</td>
+<td>
+2020-07-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>spredixcan_association_Brain_Cortex %&gt;% arrange(pvalue) %&gt;% ggplot(aes(pvalue)) + geom_histogram(bins=20) + ggtitle(&quot;Distribution of P-value (GTEx Brain Cortex&quot;)</code></pre>
 <p><img src="figure/test_scz.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
+Past versions of unnamed-chunk-9-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/hakyimlab/psychencode/blob/b4b782b4fefb7486315d998bc9d9d1d5c1ce0d65/docs/figure/test_scz.Rmd/unnamed-chunk-9-1.png" target="_blank">b4b782b</a>
+</td>
+<td>
+sabrina-mi
+</td>
+<td>
+2020-07-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>gg_qqplot(spredixcan_association_Brain_Cortex$pvalue)</code></pre>
 <p><img src="figure/test_scz.Rmd/unnamed-chunk-9-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-2">
+Past versions of unnamed-chunk-9-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/hakyimlab/psychencode/blob/b4b782b4fefb7486315d998bc9d9d1d5c1ce0d65/docs/figure/test_scz.Rmd/unnamed-chunk-9-2.png" target="_blank">b4b782b</a>
+</td>
+<td>
+sabrina-mi
+</td>
+<td>
+2020-07-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>spredixcan_association_Whole_Blood %&gt;% arrange(pvalue) %&gt;% ggplot(aes(pvalue)) + geom_histogram(bins=20) + ggtitle(&quot;Distribution of P-value (GTEx Whole Blood&quot;)</code></pre>
 <p><img src="figure/test_scz.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-1">
+Past versions of unnamed-chunk-10-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-10-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/hakyimlab/psychencode/blob/b4b782b4fefb7486315d998bc9d9d1d5c1ce0d65/docs/figure/test_scz.Rmd/unnamed-chunk-10-1.png" target="_blank">b4b782b</a>
+</td>
+<td>
+sabrina-mi
+</td>
+<td>
+2020-07-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>gg_qqplot(spredixcan_association_Whole_Blood$pvalue)</code></pre>
 <p><img src="figure/test_scz.Rmd/unnamed-chunk-10-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-2">
+Past versions of unnamed-chunk-10-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-10-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/hakyimlab/psychencode/blob/b4b782b4fefb7486315d998bc9d9d1d5c1ce0d65/docs/figure/test_scz.Rmd/unnamed-chunk-10-2.png" target="_blank">b4b782b</a>
+</td>
+<td>
+sabrina-mi
+</td>
+<td>
+2020-07-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>We can plot the intersection of genes found significant in each model. There is overlap between all three, which is a good sign.</p>
 <pre class="r"><code>significant_genes &lt;- list(Brain_Cortex = significant_genes_Brain_Cortex$gene,
               Whole_Blood = significant_genes_Whole_Blood$gene,
               Psychencode = significant_genes_psychencode$gene)
 upset(fromList(significant_genes), order.by = &#39;freq&#39;, empty.intersections = &#39;on&#39;)</code></pre>
 <p><img src="figure/test_scz.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-1">
+Past versions of unnamed-chunk-11-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/hakyimlab/psychencode/blob/b4b782b4fefb7486315d998bc9d9d1d5c1ce0d65/docs/figure/test_scz.Rmd/unnamed-chunk-11-1.png" target="_blank">b4b782b</a>
+</td>
+<td>
+sabrina-mi
+</td>
+<td>
+2020-07-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Next, we can plot the distribution of z-scores for each model:</p>
 <pre class="r"><code>zscore_psychencode &lt;- data.frame(&quot;zscore&quot; = spredixcan_association_psychencode$zscore, &quot;model&quot; = &quot;psychENCODE&quot;)
 zscore_Brain_Cortex &lt;- data.frame(&quot;zscore&quot; = spredixcan_association_Brain_Cortex$zscore, &quot;model&quot; = &quot;Brain Cortex&quot;)
@@ -846,6 +1143,43 @@ ggplot(zscore, aes(x=model, y= zscore)) + geom_violin() + geom_boxplot(width=.5)
 <pre><code>Warning: Removed 31 rows containing non-finite values (stat_ydensity).</code></pre>
 <pre><code>Warning: Removed 31 rows containing non-finite values (stat_boxplot).</code></pre>
 <p><img src="figure/test_scz.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-12-1">
+Past versions of unnamed-chunk-12-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-12-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/hakyimlab/psychencode/blob/b4b782b4fefb7486315d998bc9d9d1d5c1ce0d65/docs/figure/test_scz.Rmd/unnamed-chunk-12-1.png" target="_blank">b4b782b</a>
+</td>
+<td>
+sabrina-mi
+</td>
+<td>
+2020-07-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>We also compare z-scores between each model. Ideally, the z-scores calculated from multiple model are similar for each gene, so they would follow the identity line. The z-scores between PsychENCODE and GTEx Brain Cortex appear more consistent than the other pairs, which could mean our model is reliable. First, plot the Brain Cortex and Psychencode z-scores:</p>
 <pre class="r"><code>Brain_Cortex_psychencode_zscores = inner_join(spredixcan_association_Brain_Cortex, spredixcan_association_psychencode, by=c(&quot;gene&quot;))
 dim(Brain_Cortex_psychencode_zscores)</code></pre>
@@ -853,18 +1187,130 @@ dim(Brain_Cortex_psychencode_zscores)</code></pre>
 <pre class="r"><code>Brain_Cortex_psychencode_zscores %&gt;% ggplot(aes(zscore.x, zscore.y)) + geom_point() + ggtitle(&quot;S-PrediXcan z-score&quot;) + xlab(&quot;GTex Brain Cortex&quot;) + ylab(&quot;PsychENCODE&quot;) + geom_abline(intercept = 0, slope = 1)</code></pre>
 <pre><code>Warning: Removed 6 rows containing missing values (geom_point).</code></pre>
 <p><img src="figure/test_scz.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-1">
+Past versions of unnamed-chunk-13-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-13-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/hakyimlab/psychencode/blob/b4b782b4fefb7486315d998bc9d9d1d5c1ce0d65/docs/figure/test_scz.Rmd/unnamed-chunk-13-1.png" target="_blank">b4b782b</a>
+</td>
+<td>
+sabrina-mi
+</td>
+<td>
+2020-07-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Whole Blood and Psychencode:</p>
 <pre class="r"><code>Whole_Blood_psychencode_zscores = inner_join(spredixcan_association_Whole_Blood, spredixcan_association_psychencode, by=c(&quot;gene&quot;))
 dim(Whole_Blood_psychencode_zscores)</code></pre>
 <pre><code>[1] 4319   27</code></pre>
 <pre class="r"><code>Whole_Blood_psychencode_zscores %&gt;% ggplot(aes(zscore.x, zscore.y)) + geom_point() + ggtitle(&quot;S-PrediXcan z-score&quot;) + xlab(&quot;GTex Whole Blood&quot;) + ylab(&quot;PsychENCODE&quot;) + geom_abline(intercept = 0, slope = 1)</code></pre>
 <pre><code>Warning: Removed 12 rows containing missing values (geom_point).</code></pre>
-<p><img src="figure/test_scz.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /> Whole Blood and Brain Cortex:</p>
+<p><img src="figure/test_scz.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-14-1">
+Past versions of unnamed-chunk-14-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-14-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/hakyimlab/psychencode/blob/b4b782b4fefb7486315d998bc9d9d1d5c1ce0d65/docs/figure/test_scz.Rmd/unnamed-chunk-14-1.png" target="_blank">b4b782b</a>
+</td>
+<td>
+sabrina-mi
+</td>
+<td>
+2020-07-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Whole Blood and Brain Cortex:</p>
 <pre class="r"><code>Whole_Blood_Brain_Cortex_zscores = inner_join(spredixcan_association_Whole_Blood, spredixcan_association_Brain_Cortex, by=c(&quot;gene&quot;))
 dim(Whole_Blood_Brain_Cortex_zscores)</code></pre>
 <pre><code>[1] 1943   27</code></pre>
 <pre class="r"><code>Whole_Blood_Brain_Cortex_zscores %&gt;% ggplot(aes(zscore.x, zscore.y)) + geom_point() + ggtitle(&quot;S-PrediXcan z-score&quot;) + xlab(&quot;GTex Whole Blood&quot;) + ylab(&quot;GTEx Brain Cortex&quot;) + geom_abline(intercept = 0, slope = 1)</code></pre>
 <p><img src="figure/test_scz.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-15-1">
+Past versions of unnamed-chunk-15-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-15-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/hakyimlab/psychencode/blob/b4b782b4fefb7486315d998bc9d9d1d5c1ce0d65/docs/figure/test_scz.Rmd/unnamed-chunk-15-1.png" target="_blank">b4b782b</a>
+</td>
+<td>
+sabrina-mi
+</td>
+<td>
+2020-07-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">

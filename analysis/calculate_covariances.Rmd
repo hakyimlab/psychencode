@@ -1,5 +1,5 @@
 ---
-title: "calculate_covariances"
+title: "calculate covariances"
 author: "sabrina-mi"
 date: "2020-07-19"
 output: workflowr::wflow_html

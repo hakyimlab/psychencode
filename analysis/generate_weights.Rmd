@@ -1,5 +1,5 @@
 ---
-title: "psychencode"
+title: "generate weights"
 author: "sabrina-mi"
 date: "2020-06-22"
 output: workflowr::wflow_html
