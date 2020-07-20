@@ -15,13 +15,13 @@ Linkage disequilibrium between snps should be considered when estimating their e
 ```{bash, eval=FALSE}
 conda activate imlabtools
 METAXCAN=/home/t.med.scmi/Github/MetaXcan/software
-MODEL=/gpfs/data/im-lab/nas40t2/sabrina/psychencode
+MODEL=/home/t.med.scmi/Github/psychencode
 DATA=/scratch/t.med.scmi/1000G_hg37
 ```
 
 # Download Data
 
-The data for each chromosome contains a VCF file with nucleotide variants, indexes, copy number variants and structural variants information, along with its tabix index file. To download from the command line, run the chunk below. Each file will take at least half an hour, so if possible, submit it as a job in CRI: https://github.com/hakyimlab/analysis-sabrina/blob/master/covariance_1000G_ref/download_1000G_hg37.sh. (Run `qsub download_1000G_hg37.sh`)
+The data for each chromosome contains a VCF file with nucleotide variants, indexes, copy number variants and structural variants information, along with its tabix index file. To download from the command line, run the chunk below. Each file will take at least half an hour, so if possible, submit it as a job in CRI: https://github.com/hakyimlab/psychencode/blob/master/code/download_1000G_hg37.sh. (Run `qsub download_1000G_hg37.sh`)
 ```{bash, eval=FALSE}
 cd $DATA
 for I in {1..22}
@@ -34,7 +34,7 @@ done
 
 # Convert Genotypes to PrediXcan Format
 The VCFs need to be converted to simpler text files in "PrediXcan format", with columns **chromosome rsid position allele1 allele2 MAF id1 ..... idn**. More info here: https://github.com/hakyimlab/PrediXcan/tree/master/Software#dosage-file-format. 
-The output should be a gzipped text file for each chromosome. The conversion takes about 2 hours for each chromosome, so it's best to submit the job in CRI: https://github.com/hakyimlab/analysis-sabrina/blob/master/covariance_1000G_ref/1000G_hg37_to_predixcan.sh. However, if you run the chunk on a laptop, you may need to install bcftools beforehand. Run `brew install bcftools` or follow instructions here: https://samtools.github.io/bcftools/howtos/install.html
+The output should be a gzipped text file for each chromosome. The conversion takes about 2 hours for each chromosome, so it's best to submit the job in CRI: https://github.com/hakyimlab/psychencode/blob/master/code/1000G_hg37_to_predixcan.sh. However, if you run the chunk on a laptop, you may need to install bcftools beforehand. Run `brew install bcftools` or follow instructions here: https://samtools.github.io/bcftools/howtos/install.html
 
 ```{bash, eval=FALSE}
 filter_and_convert ()
@@ -92,7 +92,7 @@ done
 # Run Covariances Script
 The script to generate covariances is here: https://github.com/hakyimlab/MetaXcan/blob/master/software/M01_covariances_correlations.py. More info: https://github.com/hakyimlab/MetaXcan/wiki/Command-Line-Reference#m01_covariances_correlationspy
 It takes the PrediXcan format dosages and a transcriptome prediction model, in this case, a database derived from a TWAS made available at: http://resource.psychencode.org. The output will be a gzipped text file with covariance between two snps. The script below can also be submitted as a job in CRI: 
-https://github.com/hakyimlab/analysis-sabrina/blob/master/covariance_1000G_ref/1000G_psychencode_cov.sh
+https://github.com/hakyimlab/psychencode/blob/master/code/1000G_psychencode_cov.sh
 
 ```{bash, eval=FALSE}
 python3 $METAXCAN/M01_covariances_correlations.py \
