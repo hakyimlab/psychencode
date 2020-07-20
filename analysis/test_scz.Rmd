@@ -114,7 +114,6 @@ gg_qqplot(spredixcan_association_psychencode$pvalue)
 
 ```{r}
 spredixcan_association_Brain_Cortex %>% arrange(pvalue) %>% ggplot(aes(pvalue)) + geom_histogram(bins=20) + ggtitle("Distribution of P-value (GTEx Brain Cortex")
-
 gg_qqplot(spredixcan_association_Brain_Cortex$pvalue)
 ```
 

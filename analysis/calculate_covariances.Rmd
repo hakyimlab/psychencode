@@ -1,0 +1,103 @@
+---
+title: "calculate_covariances"
+author: "sabrina-mi"
+date: "2020-07-19"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+# Introduction
+
+Linkage disequilibrium between snps should be considered when estimating their effects. An external reference panel with individual-level genotypic data is needed to infer LD among genetic variants, in this case, we used 1000 Genomes Project Europeans. The covariance matrix captures LD structure. Weights are computed for each variant to predict expression of a gene. Together, they can be used in S-PrediXcan to study association between predicted gene expression and a phenotype. Alvaro's script for generating covariances takes in a predicted transciptome model and dosage information from the reference set.
+
+# Definitions
+```{bash, eval=FALSE}
+conda activate imlabtools
+METAXCAN=/home/t.med.scmi/Github/MetaXcan/software
+MODEL=/gpfs/data/im-lab/nas40t2/sabrina/psychencode
+DATA=/scratch/t.med.scmi/1000G_hg37
+```
+
+# Download Data
+
+The data for each chromosome contains a VCF file with nucleotide variants, indexes, copy number variants and structural variants information, along with its tabix index file. To download from the command line, run the chunk below. Each file will take at least half an hour, so if possible, submit it as a job in CRI: https://github.com/hakyimlab/analysis-sabrina/blob/master/covariance_1000G_ref/download_1000G_hg37.sh. (Run `qsub download_1000G_hg37.sh`)
+```{bash, eval=FALSE}
+cd $DATA
+for I in {1..22}
+do
+    wget http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr$I.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
+    wget http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr$I.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz.tbi
+done
+```
+
+
+# Convert Genotypes to PrediXcan Format
+The VCFs need to be converted to simpler text files in "PrediXcan format", with columns **chromosome rsid position allele1 allele2 MAF id1 ..... idn**. More info here: https://github.com/hakyimlab/PrediXcan/tree/master/Software#dosage-file-format. 
+The output should be a gzipped text file for each chromosome. The conversion takes about 2 hours for each chromosome, so it's best to submit the job in CRI: https://github.com/hakyimlab/analysis-sabrina/blob/master/covariance_1000G_ref/1000G_hg37_to_predixcan.sh. However, if you run the chunk on a laptop, you may need to install bcftools beforehand. Run `brew install bcftools` or follow instructions here: https://samtools.github.io/bcftools/howtos/install.html
+
+```{bash, eval=FALSE}
+filter_and_convert ()
+{
+#echo -ne "varID\t" | gzip > $3
+#bcftools view $1 -S $2 --force-samples -Ou |  bcftools query -l | tr '\n' '\t' | sed 's/\t$/\n/' | gzip >> $3
+
+#The first python inline script will check if a variant is blacklisted
+#[ -f $3 ] && rm $3
+NOW=$(date +%Y-%m-%d/%H:%M:%S)
+echo "Starting at $NOW"
+bcftools +fill-tags $1 -Ou | bcftools query -f '%CHROM\t%ID\t%POS\t%REF\t%ALT\t%MAF[\t%GT]\n' | \
+awk '
+{
+for (i = 1; i <=6; i ++) {
+    printf("%s",$i)
+    if (i < 6) {
+        printf("\t")
+    }
+
+}
+for (i = 7; i <= NF; i++) {
+    if ( substr($i, 0, 1) == ".") {
+        printf("\tNA")
+    } else if ($i ~ "[0-9]|[0-9]") {
+        n = split($i, array, "|")
+        printf("\t%d",(array[1]>0)+(array[2]>0))
+    } else {
+        #printf("%s",$i)
+        printf("Unexpected: %s",$i)
+        exit 1
+    }
+}
+printf("\n")
+}
+' | gzip > $2
+
+
+
+NOW=$(date +%Y-%m-%d/%H:%M:%S)
+echo "Ending at $NOW"
+}
+
+INPUT=$DATA/ALL.chr$I.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
+OUTPUT=/scratch/t.med.scmi/1000G_hg37_dosage/chr$I.txt.gz
+[ -d /scratch/t.med.scmi/1000G_hg37_dosage ] || mkdir -p /scratch/t.med.scmi/1000G_hg37_dosage
+
+for I in {1..22}
+do
+    filter_and_convert $INPUT $OUTPUT
+done
+
+```
+
+# Run Covariances Script
+The script to generate covariances is here: https://github.com/hakyimlab/MetaXcan/blob/master/software/M01_covariances_correlations.py. More info: https://github.com/hakyimlab/MetaXcan/wiki/Command-Line-Reference#m01_covariances_correlationspy
+It takes the PrediXcan format dosages and a transcriptome prediction model, in this case, a database derived from a TWAS made available at: http://resource.psychencode.org. The output will be a gzipped text file with covariance between two snps. The script below can also be submitted as a job in CRI: 
+https://github.com/hakyimlab/analysis-sabrina/blob/master/covariance_1000G_ref/1000G_psychencode_cov.sh
+
+```{bash, eval=FALSE}
+python3 $METAXCAN/M01_covariances_correlations.py \
+--weight_db $MODEL/psychencode_model/psychencode.db \
+--input_folder /scratch/t.med.scmi/1000G_hg37_dosage \
+--delimiter $'\t' \
+--covariance_output $MODEL/psychencode_model/psychencode.txt.gz
+```
