@@ -252,7 +252,8 @@ dim(Whole_Blood_Brain_Cortex_zscores)
 Whole_Blood_Brain_Cortex_zscores %>% ggplot(aes(zscore.x, zscore.y)) + geom_point() + ggtitle("S-PrediXcan z-score") + xlab("GTex Whole Blood") + ylab("GTEx Brain Cortex") + geom_abline(intercept = 0, slope = 1)
 ```
 
-As a sanity check, we can also compare the association results from the PGC GWAS and CLOZUK+PGC GWAS.
+# Compare Associations from CLOZUK+PGC and PGC SCZ GWAS
+As a sanity check for the harmonization step, we can also compare the association results from the PGC GWAS and CLOZUK+PGC GWAS.
 
 ```{r}
 spredixcan_association_psychencode2 = load_spredixcan_association(glue::glue("{RESULTS}/spredixcan/eqtl/pgc_scz/SCZvsCONT_psychencode.csv"), gencode_df)
@@ -261,11 +262,11 @@ significant_genes_psychencode2 <- spredixcan_association_psychencode2 %>% filter
 ```
 
 ```{r compare psychencode significant genes}
-significant_genes_scz <- list(PsychENCODE_PGC =
+psychencode_significant_genes <- list(PsychENCODE_PGC =
                             significant_genes_psychencode2$gene,
                           PsychENCODE_CLOZUK_PGC=
                             significant_genes_psychencode$gene)
-upset(fromList(significant_genes_scz), order.by = 'freq', empty.intersections = 'on')
+upset(fromList(psychencode_significant_genes), order.by = 'freq', empty.intersections = 'on')
 ```
 
 ```{r compare psychencode zscores}
@@ -273,3 +274,5 @@ psychencode_zscores = inner_join(spredixcan_association_psychencode2, spredixcan
 dim(psychencode_zscores)
 psychencode_zscores %>% ggplot(aes(zscore.x, zscore.y)) + geom_point() + ggtitle("S-PrediXcan z-score") + xlab("PsychENCODE PGC") + ylab("PsychENCODE PGC+CLOZUK") + geom_abline(intercept = 0, slope = 1)
 ```
+
+
