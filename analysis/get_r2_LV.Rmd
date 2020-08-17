@@ -34,14 +34,13 @@ OUTPUT=DATA
 
 
 This script is to copy and paste the rsq data from the PEC_TWAS_weights.tar.gz files into a matrix
-```{r read r2 files into mat, eval=FALSE}
-filelist <- list.files("~/data-Github/psychencode/PEC_TWAS_weights/")
+```{r read r2 files into mat, eval=TRUE}
+filelist <- list.files(glue::glue("{DATA}/PEC_TWAS_weights/"))
 filelist <- filelist[substr(filelist,1,4)=="ENSG"]
 
 file=filelist[1]
 
-load("/Users/lvairus/data-Github/psychencode/PEC_TWAS_weights/ENSG00000273492.wgt.RDat")
-load(glue::glue("/PEC_TWAS_weights/{file}")).
+load(glue::glue("{DATA}/PEC_TWAS_weights/{file}"))
 ngenes <- length(filelist)
 R2_mat <- matrix(NA, ngenes, 5)
 genelist <- substr(filelist, 1, 15)
