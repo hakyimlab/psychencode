@@ -62,7 +62,7 @@ saveRDS(R2_mat, "~/data-Github/psychencode/R2_mat.RDS")
 
 ```{r Comparison of Models}
 
-if( !exists(R2_mat) ) { 
+if( !exists("R2_mat") ) { 
   R2_mat = readRDS(glue::glue("{DATA}/{R2_mat.RDS}"))
 } 
 
