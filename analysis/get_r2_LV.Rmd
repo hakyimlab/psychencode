@@ -34,7 +34,7 @@ OUTPUT=DATA
 
 
 This script is to copy and paste the rsq data from the PEC_TWAS_weights.tar.gz files into a matrix
-```{r read r2 files into mat, eval=TRUE}
+```{r read r2 files into mat, eval=FALSE}
 filelist <- list.files(glue::glue("{DATA}/PEC_TWAS_weights/"))
 filelist <- filelist[substr(filelist,1,4)=="ENSG"]
 
@@ -63,13 +63,15 @@ saveRDS(R2_mat, "~/data-Github/psychencode/R2_mat.RDS")
 ```{r Comparison of Models}
 
 if( !exists("R2_mat") ) { 
-  R2_mat = readRDS(glue::glue("{DATA}/{R2_mat.RDS}"))
+  R2_mat = readRDS(glue::glue("{DATA}/R2_mat.RDS"))
 } 
 
 plot(R2_mat[,"enet"],R2_mat[,"top1"],main="CV R2 comparison top SNP vs enet");abline(0,1,col='gray')
 plot(R2_mat[,"enet"],R2_mat[,"blup"],main="CV R2 comparison blup vs enet");abline(0,1,col='gray')
 plot(R2_mat[,"enet"],R2_mat[,"bslmm"],main="CV R2 comparison bslmm vs enet");abline(0,1,col='gray')
 plot(R2_mat[,"enet"],R2_mat[,"lasso"],main="CV R2 comparison lasso vs enet");abline(0,1,col='gray')
+
+pairs(R2_mat)
 
 ```
 
