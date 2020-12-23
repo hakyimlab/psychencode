@@ -1,0 +1,144 @@
+---
+title: "psychencode_hg38_validation"
+author: ""
+date: "2020-12-22"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+# Liftover
+## Definitions
+
+```{bash, eval=FALSE}
+conda activate imlabtools
+PRE=/Users/sabrinami/Github/analysis-sabrina/prediction_model_liftover
+METAXCAN=/Users/sabrinami/Github/MetaXcan/software
+DATA=/Users/sabrinami/Desktop/psychencode_test_data
+MODEL=$PRE/models
+LIFTOVER=$PRE/liftover
+RESULTS=$PRE/results
+cd $PRE
+```
+
+## Model DB
+Run the script with the PrediXcan format PsychENCODE model, and a liftover file which can be downloaded: `wget https://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/hg19ToHg38.over.chain.gz`
+```{bash, eval=FALSE}
+python prediction_model_liftover.py \
+--input_model_db models/psychencode.db \
+--liftover liftover/hg19ToHg38.over.chain.gz \
+--output_model_db models/psychencode_hg38.db
+```
+
+Some of the variants in the hg19 model failed to lift over to hg38, they are recorded in `dropped_snps.csv`
+
+## Generate Covariances
+A more complete tutorial is here: https://github.com/hakyimlab/analysis-sabrina/blob/master/covariance_1000G_ref/covariances_hg38.Rmd.
+I submitted this job in CRI: `/gpfs/data/im-lab/nas40t2/sabrina/scripts/calculate_covariance_1000G_hg38/psychencode_cov_1000G_hg38.sh`
+
+# Validation
+## Definitions
+
+Similarly, in R, load the libraries, then set the same definitions.
+```{r libraries}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(qqman))
+suppressPackageStartupMessages(library(data.table))
+suppressPackageStartupMessages(library(RSQLite))
+suppressPackageStartupMessages(library(UpSetR))
+```
+
+
+```{r definitions}
+PRE="/Users/sabrinami/Github/analysis-sabrina/prediction_model_liftover"
+DATA="/Users/sabrinami/Desktop/psychencode_test_data"
+RESULTS=glue::glue("{PRE}/results")
+MODEL=glue::glue("{PRE}/models")
+CODE="/Users/sabrinami/Github/psychencode/code"
+source(glue::glue("{CODE}/load_data_functions.R"))
+source(glue::glue("{CODE}/plotting_utils_functions.R"))
+
+gencode_df = load_gencode_df()
+```
+
+## Run S-PrediXcan
+
+Run S-PrediXcan on the original model in hg19.
+```{bash, eval=FALSE}
+python3 $METAXCAN/SPrediXcan.py --gwas_file $DATA/clozuk_pgc2.meta.sumstats.out.txt \
+--model_db_path $MODEL/psychencode.db \
+--covariance $MODEL/psychencode_varID.txt.gz \
+--snp_column varID \
+--or_column OR \
+--pvalue_column P \
+--non_effect_allele_column A2 \
+--effect_allele_column A1 \
+--keep_non_rsid --additional_output --model_db_snp_key varID \
+--throw \
+--output_file $RESULTS/clozuk_pgc2_psychencode.csv
+```
+
+
+Run S-PrediXcan with the lifted over model.
+```{bash, eval=FALSE}
+python $METAXCAN/SPrediXcan.py \
+--gwas_file  $DATA/imputed_clozuk_pgc2.txt.gz \
+--snp_column panel_variant_id --effect_allele_column effect_allele --non_effect_allele_column non_effect_allele --zscore_column zscore \
+--model_db_path $MODEL/psychencode_hg38.db \
+--covariance $MODEL/psychencode_hg38.txt.gz \
+--keep_non_rsid --additional_output --model_db_snp_key varID \
+--throw \
+--output_file $RESULTS/clozuk_pgc2_psychencode_hg38.csv
+```
+
+And the mashr model.
+```{bash, eval=FALSE}
+python $METAXCAN/SPrediXcan.py \
+--gwas_file  $DATA/imputed_clozuk_pgc2.txt.gz \
+--snp_column panel_variant_id --effect_allele_column effect_allele --non_effect_allele_column non_effect_allele --zscore_column zscore \
+--model_db_path $MODEL/mashr_Brain_Cortex.db \
+--covariance $MODEL/mashr_Brain_Cortex.txt.gz \
+--keep_non_rsid --additional_output --model_db_snp_key varID \
+--throw \
+--output_file $RESULTS/clozuk_pgc2_mashr_Brain_Cortex.csv
+```
+
+## Compare Association Results
+
+First, load all assocation results, and check for significant genes.
+```{r load hg19 association}
+spredixcan_association_psychencode_hg19 = load_spredixcan_association(glue::glue("{RESULTS}/clozuk_pgc2_psychencode.csv"), gencode_df)
+dim(spredixcan_association_psychencode_hg19)
+significant_genes_psychencode_hg19 <- spredixcan_association_psychencode_hg19 %>% filter(pvalue < 0.05/nrow(spredixcan_association_psychencode_hg19)) %>% arrange(pvalue)
+```
+
+```{r load hg38 association}
+spredixcan_association_psychencode_hg38 = load_spredixcan_association(glue::glue("{RESULTS}/clozuk_pgc2_psychencode_hg38.csv"), gencode_df)
+dim(spredixcan_association_psychencode_hg38)
+significant_genes_psychencode_hg38 <- spredixcan_association_psychencode_hg38 %>% filter(pvalue < 0.05/nrow(spredixcan_association_psychencode_hg38)) %>% arrange(pvalue)
+```
+
+```{r load mashr association}
+spredixcan_association_Brain_Cortex = load_spredixcan_association(glue::glue("{RESULTS}/clozuk_pgc2_mashr_Brain_Cortex.csv"), gencode_df)
+dim(spredixcan_association_Brain_Cortex)
+significant_genes_Brain_Cortex <- spredixcan_association_Brain_Cortex %>% filter(pvalue < 0.05/nrow(spredixcan_association_Brain_Cortex)) %>% arrange(pvalue)
+```
+
+As a sanity check, check PsychENCODE models are consistent between builds.
+
+```{r compare psychencode zscores}
+psychencode_zscores = inner_join(spredixcan_association_psychencode_hg19, spredixcan_association_psychencode_hg38, by=c("gene"))
+dim(psychencode_zscores)
+psychencode_zscores %>% ggplot(aes(zscore.x, zscore.y)) + geom_point() + ggtitle("PsychENCODE S-PrediXcan z-score") + xlab("hg19") + ylab("hg38") + geom_abline(intercept = 0, slope = 1)
+```
+
+Then compare PsychENCODE and mashr Brain Cortex z-scores.
+
+```{r compare psychencode mashr zscores}
+psychencode_Brain_Cortex_zscores = inner_join(spredixcan_association_Brain_Cortex, spredixcan_association_psychencode_hg38, by=c("gene"))
+dim(psychencode_Brain_Cortex_zscores)
+psychencode_zscores %>% ggplot(aes(zscore.x, zscore.y)) + geom_point() + ggtitle("S-PrediXcan z-score") + xlab("mashr Brain Cortex") + ylab("PsychENCODE") + geom_abline(intercept = 0, slope = 1)
+```
+
+

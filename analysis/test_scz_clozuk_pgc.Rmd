@@ -56,7 +56,7 @@ The snps in the GWAS are in IMPUTE2 format, so it will need to be modified to ma
 ## Load GWAS and Plot
 First, we plot the GWAS.
 ```{r plot_gwas}
-scz_GWAS = fread(glue::glue("{DATA}/clozuk_pgc2.meta.sumstats.txt.gz"), header=TRUE, sep="\t")
+scz_GWAS = fread(glue::glue("{DATA}/clozuk_pgc2.meta.sumstats.txt"), header=TRUE, sep="\t")
 # manhattan(scz_GWAS, chr="CHR", bp="BP", snp="SNP", p="P" )
 # gg_qqplot(scz_GWAS$P)
 ```
