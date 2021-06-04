@@ -1,0 +1,36 @@
+---
+title: "covariances_hg38"
+author: ""
+date: "2021-06-04"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+# Introduction
+The script to generate covariances for hg38 prediction models is different from the one for hg37, which has a very specific scope and assumptions that got depreciated. Also, the 1000G hg38 genotypes don't have rsids, so this scripts builds an ID. 
+
+# Download Data
+`covariance_for_model.py` takes genotypes in parquet format. Run `git clone https://github.com/hakyimlab/summary-gwas-imputation.git`. The data can be downloaded: https://zenodo.org/record/3569954#.XyRiqChKiUk.
+Or in CRI: `/gpfs/data/im-lab/nas40t2/abarbeira/projects/gtex_v8/data_formatting/1000G_hg38_EUR_maf0.01_parquet`
+
+# Calculating Covariance
+## Definitions
+```{bash, eval=FALSE}
+REPO=/Users/sabrinami/Github/summary-gwas-imputation/src
+DATA=/Users/sabrinami/Desktop/data/reference_panel_1000G
+MODEL=/Users/sabrinami/Github/analysis-sabrina/prediction_model_liftover/models
+```
+
+## Run Covariances Script
+`parquet_genotype_pattern` helps identify genotype files by chromosome. `psychencode_hg38.db` is a PrediXcan format prediction model defined in hg38.
+The script can also be submitted as a job in CRI: `/gpfs/data/im-lab/nas40t2/sabrina/scripts/calculate_covariance_1000G_hg38/psychencode_cov_1000G_hg38.sh`
+```{bash, eval=FALSE}
+python $REPO/covariance_for_model.py \
+-parquet_genotype_folder $DATA \
+-parquet_genotype_pattern "chr(.*).variants.parquet" \
+-model_db $MODEL/psychencode_hg38.db \
+-output $MODEL/psychencode_hg38.txt.gz \
+-parsimony 1
+
+```
