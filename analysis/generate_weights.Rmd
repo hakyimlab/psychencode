@@ -23,7 +23,7 @@ export OUTPUT=$PRE/output
 export MODEL=$PRE/models
 ```
 Now in R:
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 PRE="/Users/sabrinami/Github/psychencode"
 DATA=glue::glue("{PRE}/data")
 OUTPUT=glue::glue("{PRE}/output")
@@ -50,8 +50,8 @@ In the snps table, the first column is chromosome, the fourth is position, the f
 In the wgt.matrix table, the rownames are the snp ids, and the columns are the weights derived from each method for each snp.
 In R, set the directory to PEC_TWAS_weights, then load the file:
 
-```{r, eval=FALSE}
-setwd("/Users/sabrinami/Github/psychencode/data/PEC_TWAS_weights")
+```{r, eval=TRUE}
+setwd("/Users/sabrinami/Github/psychencode/data/")
 load("ENSG00000000457.wgt.RDat")
 ```
 Now, the snps, wgt.matrix, and cv.performance are defined as variables.
@@ -68,6 +68,13 @@ suppressPackageStartupMessages(library(data.table))
 make_df will load a file and store its data as a dataframe. This is only for a single gene, so later will be repeated for all genes.
 The input is the name of the .RDat file, and it returns returns dataframe with gene, position, chromosome, ref allele, eff allele, and non-zero enet weights.
 
+In most cases, FUSION data will have columns V5 and V6 as non-effect alleles and effect alleles, respectively. We recommend confirming the ref and alt alleles by checking with the UCSC genome browser. I looked at the first couple rows of the snps table:
+```{r, eval= TRUE}
+head(snps)
+```
+
+In the UCSC browser in hg19, the snp at position 169319286 has reference allele T and effect allele G, so we set accordingly in the following function:
+
 ```{r, eval=FALSE}
 make_df <- function(file) {
   load(file)  
@@ -77,12 +84,13 @@ make_df <- function(file) {
   weights$gene <- substr(file, 1, nchar(file) - 9)
   weights$chromosome <- snps$V1 
   weights$position <- snps$V4
-  weights$ref_allele <- snps$V5
-  weights$eff_allele <- snps$V6
+  weights$ref_allele <- snps$V6
+  weights$eff_allele <- snps$V5
   weights %>% filter(enet != 0) %>% select(gene, chromosome, position, ref_allele, eff_allele, enet)
 }
 ```
 
+A thank you to Jake Gockley for pointing out our previous error in the make_df file regarding the ref and eff alleles.
 # Make Weights Table
 First, combine .RDat file names in a vector
 ```{r, eval=FALSE}
